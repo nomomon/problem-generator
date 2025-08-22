@@ -4,10 +4,22 @@ import { DataTable } from "@/components/data-table";
 import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { createClient } from "@/lib/utils/supabase/server";
+import { redirect } from "next/navigation";
 
 import data from "./data.json";
 
-export default function Page() {
+export default async function Page() {
+  const supabase = await createClient();
+  const { data: userData, error } = await supabase.auth.getUser();
+  if (error || !userData?.user) {
+    redirect("/login");
+  } else if (userData.user.app_metadata?.role !== "admin") {
+    redirect("/");
+  }
+
+  // If the user is authenticated and has the admin role, render the dashboard
+
   return (
     <SidebarProvider
       style={
