@@ -1,38 +1,22 @@
-import { AppSidebar } from "@/components/app-sidebar";
-import { SiteHeader } from "@/components/site-header";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { createClient } from "@/lib/utils/supabase/server";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function Page() {
-  const supabase = await createClient();
-  const { data: userData, error } = await supabase.auth.getUser();
-  if (error || !userData?.user) {
-    redirect("/login");
-  } else if (
-    !["admin", "super-admin"].includes(userData.user.app_metadata?.role)
-  ) {
-    redirect("/");
-  }
+import { usePageNavigation } from "@/hooks/use-page-navigation";
+
+export default function DashboardPage() {
+  usePageNavigation({
+    title: "Dashboard",
+    breadcrumbs: [{ label: "Dashboard" }],
+  });
 
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6"></div>
-          </div>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+    <div className="space-y-6 px-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Welcome to your dashboard. Here you can view and manage your data.
+        </p>
+      </div>
+      {/* Add your dashboard content here */}
+    </div>
   );
 }
