@@ -2,6 +2,7 @@ import { createClient } from "@/lib/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { NavigationProvider } from "@/lib/contexts/navigation-context";
 import { DashboardClient } from "@/components/dashboard-client";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export default async function DashboardLayout({
   children,
@@ -21,7 +22,9 @@ export default async function DashboardLayout({
 
   return (
     <NavigationProvider>
-      <DashboardClient>{children}</DashboardClient>
+      <ThemeProvider>
+        <DashboardClient>{children}</DashboardClient>
+      </ThemeProvider>
     </NavigationProvider>
   );
 }
