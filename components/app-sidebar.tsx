@@ -68,8 +68,8 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [user, setUser] = React.useState({
-    name: "Loading...",
-    email: "Loading...",
+    name: "",
+    email: "",
     avatar: "",
   });
 
