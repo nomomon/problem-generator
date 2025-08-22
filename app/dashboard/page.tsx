@@ -1,24 +1,19 @@
 import { AppSidebar } from "@/components/app-sidebar";
-import { ChartAreaInteractive } from "@/components/chart-area-interactive";
-import { DataTable } from "@/components/data-table";
-import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { createClient } from "@/lib/utils/supabase/server";
 import { redirect } from "next/navigation";
-
-import data from "./data.json";
 
 export default async function Page() {
   const supabase = await createClient();
   const { data: userData, error } = await supabase.auth.getUser();
   if (error || !userData?.user) {
     redirect("/login");
-  } else if (userData.user.app_metadata?.role !== "admin") {
+  } else if (
+    !["admin", "super-admin"].includes(userData.user.app_metadata?.role)
+  ) {
     redirect("/");
   }
-
-  // If the user is authenticated and has the admin role, render the dashboard
 
   return (
     <SidebarProvider
@@ -34,13 +29,7 @@ export default async function Page() {
         <SiteHeader />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <SectionCards />
-              <div className="px-4 lg:px-6">
-                <ChartAreaInteractive />
-              </div>
-              <DataTable data={data} />
-            </div>
+            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6"></div>
           </div>
         </div>
       </SidebarInset>
