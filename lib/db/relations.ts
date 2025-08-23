@@ -1,13 +1,6 @@
 import { relations } from "drizzle-orm/relations";
-import { usersInAuth, problems } from "./schema";
+import { problems } from "./schema";
 
-export const problemsRelations = relations(problems, ({ one }) => ({
-  usersInAuth: one(usersInAuth, {
-    fields: [problems.authorId],
-    references: [usersInAuth.id],
-  }),
-}));
-
-export const usersInAuthRelations = relations(usersInAuth, ({ many }) => ({
-  problems: many(problems),
-}));
+// We don't define relations to auth.users since it's managed by Supabase
+// and we can't create foreign key constraints to it from our schema
+export const problemsRelations = relations(problems, ({ one }) => ({}));
