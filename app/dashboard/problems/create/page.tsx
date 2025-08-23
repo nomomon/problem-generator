@@ -3,6 +3,7 @@
 import {
   ProblemEditorLayout,
   ProblemToolbar,
+  ProblemDetails,
 } from "@/components/problem-editor";
 import { usePageNavigation } from "@/hooks/use-page-navigation";
 import { useState, useTransition } from "react";
@@ -31,6 +32,7 @@ function generateProblem() {
 `.trim();
 
   const [code, setCode] = useState<string | undefined>(defaultCode);
+  const [details, setDetails] = useState<ProblemDetails>({});
   const [isPending, startTransition] = useTransition();
 
   const handleSave = () => {
@@ -41,7 +43,7 @@ function generateProblem() {
 
     startTransition(async () => {
       try {
-        await createProblem(code);
+        await createProblem(code, details);
         toast.success("Problem created successfully!");
       } catch (error) {
         console.error("Error creating problem:", error);
@@ -54,7 +56,12 @@ function generateProblem() {
     router.push("/dashboard/problems");
   };
 
-  const hasChanges = code !== defaultCode;
+  const hasChanges =
+    code !== defaultCode ||
+    !!details.name ||
+    !!(details.assets && details.assets.length > 0) ||
+    !!details.difficulty ||
+    !!(details.topics && details.topics.length > 0);
 
   const toolbar = (
     <ProblemToolbar
@@ -77,8 +84,10 @@ function generateProblem() {
       <ProblemEditorLayout
         code={code}
         onCodeChange={setCode}
+        details={details}
+        onDetailsChange={setDetails}
         defaultValue={defaultCode}
-        title="Create New Problem"
+        title={details.name || "Create New Problem"}
         subtitle="Write your JavaScript function to generate problems"
         status={status}
         toolbar={toolbar}

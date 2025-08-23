@@ -3,11 +3,12 @@
 import {
   ProblemEditorLayout,
   ProblemToolbar,
+  ProblemDetails,
 } from "@/components/problem-editor";
 import { usePageNavigation } from "@/hooks/use-page-navigation";
 import { useState, useEffect, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
-import { updateProblem, deleteProblem } from "../actions";
+import { updateProblem, deleteProblem, getProblemDetails } from "../actions";
 import { toast } from "sonner";
 
 interface ProblemPageProps {
@@ -16,15 +17,23 @@ interface ProblemPageProps {
   }>;
 }
 
+type ProblemData = {
+  id: number;
+  function_js: string | null;
+  name: string | null;
+  assets: string[] | null;
+  difficulty: "easy" | "medium" | "hard" | null;
+  topics?: string[];
+  createdAt: string;
+  authorId: string;
+};
+
 const ProblemPage = ({ params }: ProblemPageProps) => {
   const { id } = use(params);
 
-  const [problem, setProblem] = useState<{
-    id: number;
-    functionJs: string;
-    createdAt: string;
-  } | null>(null);
+  const [problem, setProblem] = useState<ProblemData | null>(null);
   const [currentCode, setCurrentCode] = useState("");
+  const [currentDetails, setCurrentDetails] = useState<ProblemDetails>({});
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -44,16 +53,18 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
     // Fetch problem data
     const fetchProblem = async () => {
       try {
-        const response = await fetch(`/api/problems/${id}`);
-        if (response.ok) {
-          const data = await response.json();
-          setProblem(data);
-          setCurrentCode(data.functionJs);
-        } else {
-          console.error("Failed to fetch problem");
-        }
+        const data = await getProblemDetails(id);
+        setProblem(data);
+        setCurrentCode(data.function_js || "");
+        setCurrentDetails({
+          name: data.name || undefined,
+          assets: data.assets || undefined,
+          difficulty: data.difficulty,
+          topics: data.topics,
+        });
       } catch (error) {
         console.error("Error fetching problem:", error);
+        toast.error("Failed to load problem");
       } finally {
         setLoading(false);
       }
@@ -62,13 +73,49 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
     fetchProblem();
   }, [id]);
 
+  const checkForChanges = useCallback(
+    (code: string, details: ProblemDetails) => {
+      if (!problem) return false;
+
+      const codeChanged = code !== (problem.function_js || "");
+      const nameChanged = (details.name || null) !== (problem.name || null);
+      const assetsChanged =
+        JSON.stringify(details.assets || null) !==
+        JSON.stringify(problem.assets || null);
+      const difficultyChanged =
+        (details.difficulty || null) !== (problem.difficulty || null);
+      const topicsChanged =
+        JSON.stringify(details.topics || null) !==
+        JSON.stringify(problem.topics || null);
+
+      return (
+        codeChanged ||
+        nameChanged ||
+        assetsChanged ||
+        difficultyChanged ||
+        topicsChanged
+      );
+    },
+    [problem],
+  );
+
   const handleSave = useCallback(async () => {
     if (!hasUnsavedChanges || !problem) return;
 
     setIsSaving(true);
     try {
-      await updateProblem(id, currentCode);
-      setProblem({ ...problem, functionJs: currentCode });
+      await updateProblem(id, currentCode, currentDetails);
+
+      // Update the problem state with saved values
+      setProblem({
+        ...problem,
+        function_js: currentCode,
+        name: currentDetails.name || null,
+        assets: currentDetails.assets || null,
+        difficulty: currentDetails.difficulty || null,
+        topics: currentDetails.topics,
+      });
+
       setHasUnsavedChanges(false);
       toast.success("Problem saved successfully!");
     } catch (error) {
@@ -77,7 +124,7 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
     } finally {
       setIsSaving(false);
     }
-  }, [hasUnsavedChanges, problem, id, currentCode]);
+  }, [hasUnsavedChanges, problem, id, currentCode, currentDetails]);
 
   const handleDelete = async () => {
     if (!problem) return;
@@ -98,7 +145,12 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
   const handleCodeChange = (newCode: string | undefined) => {
     const code = newCode || "";
     setCurrentCode(code);
-    setHasUnsavedChanges(code !== problem?.functionJs);
+    setHasUnsavedChanges(checkForChanges(code, currentDetails));
+  };
+
+  const handleDetailsChange = (newDetails: ProblemDetails) => {
+    setCurrentDetails(newDetails);
+    setHasUnsavedChanges(checkForChanges(currentCode, newDetails));
   };
 
   const handleBack = () => {
@@ -155,13 +207,17 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
     ? { label: "Unsaved Changes", variant: "outline" as const }
     : { label: "Saved", variant: "secondary" as const };
 
+  const displayTitle = currentDetails.name || `Problem #${problem.id}`;
+
   return (
     <div className="h-full min-h-0 flex-1">
       <ProblemEditorLayout
         code={currentCode}
         onCodeChange={handleCodeChange}
-        defaultValue={problem.functionJs}
-        title={`Problem #${problem.id}`}
+        details={currentDetails}
+        onDetailsChange={handleDetailsChange}
+        defaultValue={problem.function_js || ""}
+        title={displayTitle}
         subtitle={`Created: ${new Date(problem.createdAt).toLocaleDateString()}`}
         status={status}
         toolbar={toolbar}

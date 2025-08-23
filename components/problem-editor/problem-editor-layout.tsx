@@ -4,6 +4,10 @@ import { CodeEditor } from "@/components/problem-editor/code-editor";
 import { CodeRunnerPanel } from "@/components/problem-editor/code-runner-panel";
 import { PanelHeader } from "@/components/problem-editor/panel-header";
 import {
+  ProblemDetailsForm,
+  ProblemDetails,
+} from "@/components/problem-editor/problem-details-form";
+import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
@@ -15,6 +19,8 @@ import { ReactNode } from "react";
 interface ProblemEditorLayoutProps {
   code: string | undefined;
   onCodeChange: (code: string | undefined) => void;
+  details?: ProblemDetails;
+  onDetailsChange?: (details: ProblemDetails) => void;
   defaultValue?: string;
   readOnly?: boolean;
   tailCode?: string;
@@ -43,6 +49,8 @@ return text;`;
 export function ProblemEditorLayout({
   code,
   onCodeChange,
+  details,
+  onDetailsChange,
   defaultValue = defaultCode,
   readOnly = false,
   tailCode = defaultTailCode,
@@ -76,6 +84,20 @@ export function ProblemEditorLayout({
                   {status.label}
                 </Badge>
               )}
+              {details?.difficulty && (
+                <Badge
+                  variant={
+                    details.difficulty === "easy"
+                      ? "default"
+                      : details.difficulty === "medium"
+                        ? "secondary"
+                        : "destructive"
+                  }
+                >
+                  {details.difficulty.charAt(0).toUpperCase() +
+                    details.difficulty.slice(1)}
+                </Badge>
+              )}
             </div>
 
             {/* Toolbar */}
@@ -83,13 +105,48 @@ export function ProblemEditorLayout({
               <div className="flex items-center gap-2">{toolbar}</div>
             )}
           </div>
+
+          {/* Topics Display */}
+          {details?.topics && details.topics.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-3">
+              {details.topics.map((topic) => (
+                <Badge key={topic} variant="outline" className="text-xs">
+                  {topic}
+                </Badge>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Editor Content */}
       <div className="flex-1 min-h-0 p-3">
         <ResizablePanelGroup direction="horizontal" className="h-full">
-          <ResizablePanel defaultSize={50} minSize={30} className="p-4 pr-0">
+          {/* Details Panel */}
+          {onDetailsChange && (
+            <>
+              <ResizablePanel
+                defaultSize={25}
+                minSize={20}
+                maxSize={40}
+                className="p-4 pr-0"
+              >
+                <ProblemDetailsForm
+                  details={details || {}}
+                  onDetailsChange={onDetailsChange}
+                  className="h-full overflow-y-auto"
+                />
+              </ResizablePanel>
+              <ResizableHandle withHandle className="w-0" />
+            </>
+          )}
+
+          {/* Code Editor Panel */}
+          <ResizablePanel
+            defaultSize={onDetailsChange ? 37.5 : 50}
+            minSize={30}
+            className="p-4 pr-0"
+          >
             <Card className="h-full border shadow-sm flex flex-col rounded-r-none">
               <PanelHeader
                 title="Code Editor"
@@ -111,7 +168,12 @@ export function ProblemEditorLayout({
 
           <ResizableHandle withHandle className="w-0" />
 
-          <ResizablePanel defaultSize={50} minSize={30} className="p-4 pl-0">
+          {/* Output Panel */}
+          <ResizablePanel
+            defaultSize={onDetailsChange ? 37.5 : 50}
+            minSize={30}
+            className="p-4 pl-0"
+          >
             <Card className="h-full border shadow-sm flex flex-col rounded-l-none">
               <PanelHeader title="Output" description="Test and view results" />
               <div className="flex-1 min-h-0 p-4">
