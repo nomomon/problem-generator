@@ -29,7 +29,7 @@ const CreateProblemPage = () => {
 
     setIsRunning(true);
     try {
-      const executionResult = await codeRunner.executeCode(code);
+      const executionResult = await codeRunner.executeCode(code + tailCode);
       setResult(executionResult);
     } catch (error) {
       setResult({
@@ -171,31 +171,14 @@ const CreateProblemPage = () => {
 
 const defaultCode = `
 function generateProblem() {
-    console.log("Generating a new problem...");
-    
-    const problems = [
-        "Two Sum",
-        "Reverse String", 
-        "Fibonacci Sequence",
-        "Prime Numbers",
-        "Binary Search"
-    ];
-    
-    const randomIndex = Math.floor(Math.random() * problems.length);
-    const selectedProblem = problems[randomIndex];
-    
-    console.log("Selected problem:", selectedProblem);
-    
     return {
-        text: selectedProblem,
-        difficulty: "Medium",
-        timestamp: new Date().toISOString()
+        text: "Problem text",
     };
 }
-
-// Call the function to see the output
-const { text } = generateProblem();
-return text;
 `.trim();
+
+const tailCode = `
+const { text } = generateProblem();
+return text;`;
 
 export default CreateProblemPage;
