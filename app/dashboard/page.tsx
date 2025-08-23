@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ProblemsList } from "@/components/problem-editor/problems-list";
+import { ProblemsList } from "@/components/problem-list/problems-list";
 
 interface Problem {
   id: number;

@@ -18,10 +18,23 @@ export async function GET() {
     const sql = postgres(process.env.DATABASE_URL!);
 
     const result = await sql`
-            SELECT id, created_at 
-            FROM problems 
-            WHERE author_id = ${user.id}
-            ORDER BY created_at DESC
+            SELECT 
+                p.id, 
+                p.created_at, 
+                p.name,
+                p.function_js,
+                p.difficulty,
+                p.assets,
+                COALESCE(
+                    array_agg(t.name ORDER BY t.name) FILTER (WHERE t.name IS NOT NULL), 
+                    ARRAY[]::text[]
+                ) as topics
+            FROM problems p
+            LEFT JOIN problem_topics pt ON p.id = pt.problem_id
+            LEFT JOIN topics t ON pt.topic_id = t.id
+            WHERE p.author_id = ${user.id}
+            GROUP BY p.id, p.created_at, p.name, p.function_js, p.difficulty, p.assets
+            ORDER BY p.created_at DESC
         `;
 
     await sql.end();
@@ -29,6 +42,13 @@ export async function GET() {
     const problems = result.map((row: any) => ({
       id: row.id,
       createdAt: row.created_at,
+      name: row.name || `Problem #${row.id}`,
+      functionJs: row.function_js,
+      difficulty: row.difficulty,
+      assets: row.assets || [],
+      topics: row.topics || [],
+      hasCode: Boolean(row.function_js),
+      assetCount: (row.assets || []).length,
     }));
 
     return NextResponse.json({ problems });

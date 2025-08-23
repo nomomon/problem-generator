@@ -2,12 +2,7 @@
 
 import { usePageNavigation } from "@/hooks/use-page-navigation";
 import { useState, useEffect } from "react";
-import { ProblemsList } from "@/components/problem-editor/problems-list";
-
-interface Problem {
-  id: number;
-  createdAt: string;
-}
+import { ProblemsList, type Problem } from "@/components/problem-list";
 
 export default function ProblemsPage() {
   const [problems, setProblems] = useState<Problem[]>([]);
