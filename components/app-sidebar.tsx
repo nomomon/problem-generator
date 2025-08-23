@@ -3,10 +3,11 @@
 import * as React from "react";
 import {
   IconCamera,
-  IconDashboard,
+  IconHome,
   IconFileWord,
   IconInnerShadowTop,
   IconSettings,
+  IconMath,
 } from "@tabler/icons-react";
 
 import { NavDocuments } from "@/components/nav-documents";
@@ -28,18 +29,13 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: "/",
-      icon: IconDashboard,
-    },
-    {
-      title: "Dashboard",
       url: "/dashboard",
-      icon: IconDashboard,
+      icon: IconHome,
     },
     {
       title: "Problems",
       url: "/dashboard/problems",
-      icon: IconCamera,
+      icon: IconMath,
     },
   ],
   navSecondary: [
