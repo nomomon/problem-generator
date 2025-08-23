@@ -109,7 +109,7 @@ export function ProblemEditorLayout({
             </Card>
           </ResizablePanel>
 
-          <ResizableHandle withHandle className="my-4" />
+          <ResizableHandle withHandle className="w-0" />
 
           <ResizablePanel defaultSize={50} minSize={30} className="p-4 pl-0">
             <Card className="h-full border shadow-sm flex flex-col rounded-l-none">
