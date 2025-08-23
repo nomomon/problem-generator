@@ -9,7 +9,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { usePageNavigation } from "@/hooks/use-page-navigation";
 import { codeRunner, type CodeExecutionResult } from "@/lib/utils/code-runner";
 import { useState } from "react";
@@ -170,7 +169,8 @@ const CreateProblemPage = () => {
   );
 };
 
-const defaultCode = `function generateProblem() {
+const defaultCode = `
+function generateProblem() {
     console.log("Generating a new problem...");
     
     const problems = [
@@ -187,13 +187,15 @@ const defaultCode = `function generateProblem() {
     console.log("Selected problem:", selectedProblem);
     
     return {
-        title: selectedProblem,
+        text: selectedProblem,
         difficulty: "Medium",
         timestamp: new Date().toISOString()
     };
 }
 
 // Call the function to see the output
-generateProblem();`;
+const { text } = generateProblem();
+return text;
+`.trim();
 
 export default CreateProblemPage;
