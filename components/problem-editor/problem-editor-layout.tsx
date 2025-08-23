@@ -89,8 +89,8 @@ export function ProblemEditorLayout({
       {/* Editor Content */}
       <div className="flex-1 min-h-0 p-3">
         <ResizablePanelGroup direction="horizontal" className="h-full">
-          <ResizablePanel defaultSize={50} minSize={30} className="p-4">
-            <Card className="h-full border shadow-sm flex flex-col">
+          <ResizablePanel defaultSize={50} minSize={30} className="p-4 pr-0">
+            <Card className="h-full border shadow-sm flex flex-col rounded-r-none">
               <PanelHeader
                 title="Code Editor"
                 description="Write your JavaScript function"
@@ -109,10 +109,10 @@ export function ProblemEditorLayout({
             </Card>
           </ResizablePanel>
 
-          <ResizableHandle className="w-1 bg-border hover:bg-accent transition-colors" />
+          <ResizableHandle withHandle className="my-4" />
 
-          <ResizablePanel defaultSize={50} minSize={30} className="p-4">
-            <Card className="h-full border shadow-sm flex flex-col">
+          <ResizablePanel defaultSize={50} minSize={30} className="p-4 pl-0">
+            <Card className="h-full border shadow-sm flex flex-col rounded-l-none">
               <PanelHeader title="Output" description="Test and view results" />
               <div className="flex-1 min-h-0 p-4">
                 <CodeRunnerPanel
