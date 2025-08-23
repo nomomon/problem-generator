@@ -50,7 +50,7 @@ export function ProblemEditorLayout({
   title,
   subtitle,
   status,
-  className = "h-full flex flex-col bg-background",
+  className = "h-full flex flex-col bg-background min-h-0",
 }: ProblemEditorLayoutProps) {
   return (
     <div className={className}>
@@ -87,15 +87,15 @@ export function ProblemEditorLayout({
       </div>
 
       {/* Editor Content */}
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 p-3">
         <ResizablePanelGroup direction="horizontal" className="h-full">
-          <ResizablePanel defaultSize={50} minSize={30}>
-            <Card className="h-full m-3 border shadow-sm">
+          <ResizablePanel defaultSize={50} minSize={30} className="p-4">
+            <Card className="h-full border shadow-sm flex flex-col">
               <PanelHeader
                 title="Code Editor"
                 description="Write your JavaScript function"
               />
-              <div className="p-4 h-[calc(100%-3.5rem)]">
+              <div className="flex-1 min-h-0 p-4">
                 <CodeEditor
                   className="h-full"
                   value={code}
@@ -111,10 +111,10 @@ export function ProblemEditorLayout({
 
           <ResizableHandle className="w-1 bg-border hover:bg-accent transition-colors" />
 
-          <ResizablePanel defaultSize={50} minSize={30}>
-            <Card className="h-full m-3 border shadow-sm">
+          <ResizablePanel defaultSize={50} minSize={30} className="p-4">
+            <Card className="h-full border shadow-sm flex flex-col">
               <PanelHeader title="Output" description="Test and view results" />
-              <div className="p-4 h-[calc(100%-3.5rem)]">
+              <div className="flex-1 min-h-0 p-4">
                 <CodeRunnerPanel
                   code={code}
                   tailCode={tailCode}

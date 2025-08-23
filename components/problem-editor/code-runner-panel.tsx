@@ -64,7 +64,7 @@ export const CodeRunnerPanel = ({
   }, [isRunning, code, disabled]);
 
   return (
-    <div className={`flex flex-col h-full ${className}`}>
+    <div className={`flex flex-col h-full min-h-0 ${className}`}>
       {/* Run Button */}
       <div className="mb-4 flex-shrink-0">
         <Button
@@ -88,9 +88,9 @@ export const CodeRunnerPanel = ({
       </div>
 
       {/* Results */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 min-h-0 overflow-hidden">
         {result && (
-          <div className="mb-3 flex items-center justify-between">
+          <div className="mb-3 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-2">
               <Badge
                 variant="outline"
@@ -120,9 +120,9 @@ export const CodeRunnerPanel = ({
           </div>
         )}
 
-        <div className="space-y-3 h-full overflow-auto">
+        <div className="flex-1 min-h-0 overflow-auto">
           {result ? (
-            <>
+            <div className="space-y-3">
               {result.logs.length > 0 && (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
@@ -172,7 +172,7 @@ export const CodeRunnerPanel = ({
                   </div>
                 </div>
               )}
-            </>
+            </div>
           ) : (
             <div className="text-center py-12">
               <div className="mx-auto w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-3">
