@@ -73,15 +73,17 @@ function generateProblem() {
     : { label: "New Problem", variant: "secondary" as const };
 
   return (
-    <ProblemEditorLayout
-      code={code}
-      onCodeChange={setCode}
-      defaultValue={defaultCode}
-      title="Create New Problem"
-      subtitle="Write your JavaScript function to generate problems"
-      status={status}
-      toolbar={toolbar}
-    />
+    <div className="h-full">
+      <ProblemEditorLayout
+        code={code}
+        onCodeChange={setCode}
+        defaultValue={defaultCode}
+        title="Create New Problem"
+        subtitle="Write your JavaScript function to generate problems"
+        status={status}
+        toolbar={toolbar}
+      />
+    </div>
   );
 };
 

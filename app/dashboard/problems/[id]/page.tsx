@@ -156,15 +156,17 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
     : { label: "Saved", variant: "secondary" as const };
 
   return (
-    <ProblemEditorLayout
-      code={currentCode}
-      onCodeChange={handleCodeChange}
-      defaultValue={problem.functionJs}
-      title={`Problem #${problem.id}`}
-      subtitle={`Created: ${new Date(problem.createdAt).toLocaleDateString()}`}
-      status={status}
-      toolbar={toolbar}
-    />
+    <div className="h-full">
+      <ProblemEditorLayout
+        code={currentCode}
+        onCodeChange={handleCodeChange}
+        defaultValue={problem.functionJs}
+        title={`Problem #${problem.id}`}
+        subtitle={`Created: ${new Date(problem.createdAt).toLocaleDateString()}`}
+        status={status}
+        toolbar={toolbar}
+      />
+    </div>
   );
 };
 

@@ -50,7 +50,7 @@ export function ProblemEditorLayout({
   title,
   subtitle,
   status,
-  className = "h-screen flex flex-col bg-background",
+  className = "h-full flex flex-col bg-background",
 }: ProblemEditorLayoutProps) {
   return (
     <div className={className}>
