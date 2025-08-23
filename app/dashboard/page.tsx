@@ -11,6 +11,13 @@ import { ProblemsList } from "@/components/problem-list/problems-list";
 interface Problem {
   id: number;
   createdAt: string;
+  name: string;
+  functionJs?: string | null;
+  difficulty?: "easy" | "medium" | "hard" | null;
+  assets?: string[];
+  topics?: string[];
+  hasCode?: boolean;
+  assetCount?: number;
 }
 
 export default function DashboardPage() {
