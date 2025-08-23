@@ -1,18 +1,24 @@
 "use client";
 
-import { CodeEditor } from "@/components/code-editor";
-import { CodeRunnerPanel } from "@/components/code-runner-panel";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
+import { ProblemEditorLayout } from "@/components/problem-editor/problem-editor-layout";
 import { usePageNavigation } from "@/hooks/use-page-navigation";
 import { useState, useEffect, useCallback, use } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { updateProblem } from "@/app/dashboard/create/actions";
+import { updateProblem, deleteProblem } from "../actions";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Trash2 } from "lucide-react";
 
 interface ProblemPageProps {
   params: Promise<{
@@ -31,6 +37,7 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
   const [currentCode, setCurrentCode] = useState("");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -38,6 +45,7 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
     title: `Problem #${id}`,
     breadcrumbs: [
       { label: "Dashboard", href: "/dashboard" },
+      { label: "Problems", href: "/dashboard/problems" },
       { label: `Problem #${id}` },
     ],
   });
@@ -81,6 +89,22 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
     }
   }, [hasUnsavedChanges, problem, id, currentCode]);
 
+  const handleDelete = async () => {
+    if (!problem) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteProblem(id);
+      toast.success("Problem deleted successfully!");
+      router.push("/dashboard/problems");
+    } catch (error) {
+      console.error("Error deleting problem:", error);
+      toast.error("Failed to delete problem. Please try again.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const handleCodeChange = (newCode: string | undefined) => {
     const code = newCode || "";
     setCurrentCode(code);
@@ -114,64 +138,79 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
     return (
       <div className="p-6 h-[80vh] flex flex-col items-center justify-center">
         <div className="mb-4">Problem not found</div>
-        <Button onClick={() => router.push("/dashboard")}>
-          Back to Dashboard
+        <Button onClick={() => router.push("/dashboard/problems")}>
+          Back to Problems
         </Button>
       </div>
     );
   }
 
-  return (
-    <div className="p-6 h-[80vh] flex flex-col">
-      <div className="mb-4 flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold">Problem #{problem.id}</h1>
-          <p className="text-sm text-muted-foreground">
-            Created: {new Date(problem.createdAt).toLocaleDateString()}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            onClick={handleSave}
-            disabled={!hasUnsavedChanges || isSaving}
-            variant={hasUnsavedChanges ? "default" : "secondary"}
-          >
-            {isSaving
-              ? "Saving..."
-              : hasUnsavedChanges
-                ? "Save Changes"
-                : "Saved"}
-          </Button>
-          <Button onClick={() => router.push("/dashboard")} variant="outline">
-            Back to Dashboard
-          </Button>
-        </div>
+  const headerActions = (
+    <div className="flex justify-between items-center">
+      <div>
+        <h1 className="text-2xl font-bold">Problem #{problem.id}</h1>
+        <p className="text-sm text-muted-foreground">
+          Created: {new Date(problem.createdAt).toLocaleDateString()}
+        </p>
       </div>
+      <div className="flex gap-2">
+        <Button
+          onClick={handleSave}
+          disabled={!hasUnsavedChanges || isSaving}
+          variant={hasUnsavedChanges ? "default" : "secondary"}
+        >
+          {isSaving
+            ? "Saving..."
+            : hasUnsavedChanges
+              ? "Save Changes"
+              : "Saved"}
+        </Button>
 
-      <div className="flex-1 min-h-0">
-        <ResizablePanelGroup direction="horizontal" className="h-full">
-          <ResizablePanel className="p-4">
-            <CodeEditor
-              className="h-full py-4"
-              value={currentCode}
-              onChange={handleCodeChange}
-              defaultValue={problem.functionJs}
-              size="full"
-              readOnly={false}
-            />
-          </ResizablePanel>
-          <ResizableHandle withHandle={true} />
-          <ResizablePanel className="p-4">
-            <CodeRunnerPanel code={currentCode} tailCode={tailCode} />
-          </ResizablePanel>
-        </ResizablePanelGroup>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" disabled={isDeleting}>
+              <Trash2 className="h-4 w-4 mr-2" />
+              {isDeleting ? "Deleting..." : "Delete"}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Problem</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete Problem #{problem.id}? This
+                action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDelete}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <Button
+          onClick={() => router.push("/dashboard/problems")}
+          variant="outline"
+        >
+          Back to Problems
+        </Button>
       </div>
     </div>
   );
-};
 
-const tailCode = `
-const { text } = generateProblem();
-return text;`;
+  return (
+    <ProblemEditorLayout
+      code={currentCode}
+      onCodeChange={handleCodeChange}
+      defaultValue={problem.functionJs}
+      headerActions={headerActions}
+    />
+  );
+};
 
 export default ProblemPage;

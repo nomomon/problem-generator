@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ProblemsList } from "@/components/problem-editor/problems-list";
 
 interface Problem {
   id: number;
@@ -42,6 +43,12 @@ export default function DashboardPage() {
     fetchProblems();
   }, []);
 
+  const handleProblemDeleted = (problemId: number) => {
+    setProblems((prevProblems) =>
+      prevProblems.filter((problem) => problem.id !== problemId),
+    );
+  };
+
   return (
     <div className="space-y-6 px-6">
       <div className="flex justify-between items-center">
@@ -52,56 +59,44 @@ export default function DashboardPage() {
             problems.
           </p>
         </div>
-        <Button onClick={() => router.push("/dashboard/create")}>
-          Create New Problem
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => router.push("/dashboard/problems/create")}>
+            Create New Problem
+          </Button>
+          <Link href="/dashboard/problems">
+            <Button variant="outline">View All Problems</Button>
+          </Link>
+        </div>
       </div>
 
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Your Problems</h2>
-
-        {loading ? (
-          <div className="flex items-center justify-center py-8">
-            <div>Loading problems...</div>
-          </div>
-        ) : problems.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-8">
-              <p className="text-muted-foreground mb-4">
-                You haven't created any problems yet.
-              </p>
-              <Button onClick={() => router.push("/dashboard/create")}>
-                Create Your First Problem
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {problems.map((problem) => (
-              <Card
-                key={problem.id}
-                className="hover:shadow-md transition-shadow"
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            Recent Problems
+            {problems.length > 3 && (
+              <Link
+                href="/dashboard/problems"
+                className="text-sm text-muted-foreground hover:text-foreground"
               >
-                <CardHeader>
-                  <CardTitle className="text-lg">
-                    Problem #{problem.id}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Created: {new Date(problem.createdAt).toLocaleDateString()}
-                  </p>
-                  <Link href={`/dashboard/problems/${problem.id}`}>
-                    <Button variant="outline" className="w-full">
-                      View Problem
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
+                View all ({problems.length})
+              </Link>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <div>Loading problems...</div>
+            </div>
+          ) : (
+            <ProblemsList
+              problems={problems.slice(0, 3)} // Show only first 3 problems
+              onProblemDeleted={handleProblemDeleted}
+              showCreateButton={false} // Don't show create button in the list
+            />
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

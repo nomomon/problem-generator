@@ -46,6 +46,7 @@ export async function createProblem(functionJs: string) {
 
   // Revalidate the dashboard page to show the new problem
   revalidatePath("/dashboard");
+  revalidatePath("/dashboard/problems");
 
   // Redirect to the new problem page (outside try-catch to avoid catching NEXT_REDIRECT)
   redirect(`/dashboard/problems/${newProblemId}`);
@@ -81,11 +82,53 @@ export async function updateProblem(problemId: string, functionJs: string) {
 
     // Revalidate the current problem page
     revalidatePath(`/dashboard/problems/${problemId}`);
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/problems");
 
     return { success: true };
   } catch (error) {
     console.error("Error updating problem:", error);
     throw new Error("Failed to update problem");
+  } finally {
+    await sql.end(); // Close the connection in finally block
+  }
+}
+
+export async function deleteProblem(problemId: string) {
+  // Get the current user from Supabase
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    throw new Error("User not authenticated");
+  }
+
+  // Create postgres client
+  const sql = postgres(process.env.DATABASE_URL!);
+
+  try {
+    // Delete the problem - only allow deleting if the user is the author
+    const result = await sql`
+            DELETE FROM problems 
+            WHERE id = ${problemId} AND author_id = ${user.id}
+            RETURNING id
+        `;
+
+    if (result.length === 0) {
+      throw new Error("Problem not found or unauthorized");
+    }
+
+    // Revalidate the dashboard pages
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/problems");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting problem:", error);
+    throw new Error("Failed to delete problem");
   } finally {
     await sql.end(); // Close the connection in finally block
   }

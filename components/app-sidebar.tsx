@@ -27,9 +27,19 @@ import { createClient } from "@/lib/utils/supabase/client";
 const data = {
   navMain: [
     {
-      title: "Dashboard",
+      title: "Home",
       url: "/",
       icon: IconDashboard,
+    },
+    {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: IconDashboard,
+    },
+    {
+      title: "Problems",
+      url: "/dashboard/problems",
+      icon: IconCamera,
     },
   ],
   navSecondary: [

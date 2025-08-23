@@ -119,3 +119,48 @@ export async function PUT(
     );
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+
+  try {
+    // Get the current user from Supabase
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const sql = postgres(process.env.DATABASE_URL!);
+
+    const result = await sql`
+            DELETE FROM problems 
+            WHERE id = ${id} AND author_id = ${user.id}
+            RETURNING id
+        `;
+
+    await sql.end();
+
+    if (result.length === 0) {
+      return NextResponse.json(
+        { error: "Problem not found or unauthorized" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting problem:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}
