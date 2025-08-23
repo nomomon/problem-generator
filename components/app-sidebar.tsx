@@ -2,10 +2,9 @@
 
 import * as React from "react";
 import {
-  IconCamera,
+  IconInfinity,
   IconHome,
   IconFileWord,
-  IconInnerShadowTop,
   IconSettings,
   IconMath,
 } from "@tabler/icons-react";
@@ -110,8 +109,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <IconInfinity className="!size-5" />
+                <span className="text-base font-semibold">InfPrep Inc.</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
