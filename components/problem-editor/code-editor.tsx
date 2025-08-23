@@ -7,12 +7,12 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils/index";
 
 const editorVariants = cva(
-  "border rounded-md overflow-hidden focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px] transition-all",
+  "border rounded-lg overflow-hidden focus-within:border-ring focus-within:ring-ring/20 focus-within:ring-2 transition-all duration-200",
   {
     variants: {
       variant: {
-        default: "border-input bg-background",
-        filled: "bg-muted border-muted",
+        default: "border-border bg-background shadow-sm",
+        filled: "bg-muted/50 border-muted-foreground/20",
         ghost: "border-transparent bg-transparent",
       },
       size: {
@@ -125,6 +125,10 @@ const CodeEditor = React.forwardRef<HTMLDivElement, CodeEditorProps>(
     const defaultOptions = {
       minimap: { enabled: false },
       fontSize: 14,
+      lineHeight: 1.6,
+      letterSpacing: 0.5,
+      fontFamily:
+        "'JetBrains Mono', 'Fira Code', 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace",
       lineNumbers: "on" as const,
       wordWrap: "on" as const,
       scrollBeyondLastLine: false,
@@ -144,6 +148,20 @@ const CodeEditor = React.forwardRef<HTMLDivElement, CodeEditorProps>(
       roundedSelection: false,
       readOnly,
       theme: theme === "dark" ? "vs-dark" : "vs-light",
+      padding: { top: 16, bottom: 16 },
+      lineDecorationsWidth: 10,
+      lineNumbersMinChars: 3,
+      glyphMargin: false,
+      // Enhance syntax highlighting
+      bracketPairColorization: { enabled: true },
+      guides: {
+        bracketPairs: true,
+        indentation: true,
+      },
+      suggest: {
+        showKeywords: true,
+        showSnippets: true,
+      },
       ...options,
     };
 

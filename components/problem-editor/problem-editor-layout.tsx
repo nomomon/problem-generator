@@ -1,12 +1,15 @@
 "use client";
 
-import { CodeEditor } from "@/components/code-editor";
-import { CodeRunnerPanel } from "@/components/code-runner-panel";
+import { CodeEditor } from "@/components/problem-editor/code-editor";
+import { CodeRunnerPanel } from "@/components/problem-editor/code-runner-panel";
+import { PanelHeader } from "@/components/problem-editor/panel-header";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { ReactNode } from "react";
 
 interface ProblemEditorLayoutProps {
@@ -15,7 +18,13 @@ interface ProblemEditorLayoutProps {
   defaultValue?: string;
   readOnly?: boolean;
   tailCode?: string;
-  headerActions?: ReactNode;
+  toolbar?: ReactNode;
+  title?: string;
+  subtitle?: string;
+  status?: {
+    label: string;
+    variant?: "default" | "secondary" | "destructive" | "outline";
+  };
   className?: string;
 }
 
@@ -37,28 +46,82 @@ export function ProblemEditorLayout({
   defaultValue = defaultCode,
   readOnly = false,
   tailCode = defaultTailCode,
-  headerActions,
-  className = "p-6 h-[80vh] flex flex-col",
+  toolbar,
+  title,
+  subtitle,
+  status,
+  className = "h-screen flex flex-col bg-background",
 }: ProblemEditorLayoutProps) {
   return (
     <div className={className}>
-      {headerActions && <div className="mb-4">{headerActions}</div>}
+      {/* Header Section */}
+      <div className="flex-shrink-0 border-b bg-card">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              {title && (
+                <div>
+                  <h1 className="text-xl font-semibold tracking-tight">
+                    {title}
+                  </h1>
+                  {subtitle && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {subtitle}
+                    </p>
+                  )}
+                </div>
+              )}
+              {status && (
+                <Badge variant={status.variant || "secondary"}>
+                  {status.label}
+                </Badge>
+              )}
+            </div>
 
+            {/* Toolbar */}
+            {toolbar && (
+              <div className="flex items-center gap-2">{toolbar}</div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Editor Content */}
       <div className="flex-1 min-h-0">
         <ResizablePanelGroup direction="horizontal" className="h-full">
-          <ResizablePanel className="p-4">
-            <CodeEditor
-              className="h-full py-4"
-              value={code}
-              onChange={onCodeChange}
-              defaultValue={defaultValue}
-              size="full"
-              readOnly={readOnly}
-            />
+          <ResizablePanel defaultSize={50} minSize={30}>
+            <Card className="h-full m-3 border shadow-sm">
+              <PanelHeader
+                title="Code Editor"
+                description="Write your JavaScript function"
+              />
+              <div className="p-4 h-[calc(100%-3.5rem)]">
+                <CodeEditor
+                  className="h-full"
+                  value={code}
+                  onChange={onCodeChange}
+                  defaultValue={defaultValue}
+                  size="full"
+                  readOnly={readOnly}
+                  variant="ghost"
+                />
+              </div>
+            </Card>
           </ResizablePanel>
-          <ResizableHandle withHandle={true} />
-          <ResizablePanel className="p-4">
-            <CodeRunnerPanel code={code} tailCode={tailCode} />
+
+          <ResizableHandle className="w-1 bg-border hover:bg-accent transition-colors" />
+
+          <ResizablePanel defaultSize={50} minSize={30}>
+            <Card className="h-full m-3 border shadow-sm">
+              <PanelHeader title="Output" description="Test and view results" />
+              <div className="p-4 h-[calc(100%-3.5rem)]">
+                <CodeRunnerPanel
+                  code={code}
+                  tailCode={tailCode}
+                  className="h-full"
+                />
+              </div>
+            </Card>
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>

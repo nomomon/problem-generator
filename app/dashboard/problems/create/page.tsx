@@ -1,13 +1,18 @@
 "use client";
 
-import { ProblemEditorLayout } from "@/components/problem-editor/problem-editor-layout";
+import {
+  ProblemEditorLayout,
+  ProblemToolbar,
+} from "@/components/problem-editor";
 import { usePageNavigation } from "@/hooks/use-page-navigation";
 import { useState, useTransition } from "react";
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import { createProblem } from "../actions";
 import { toast } from "sonner";
 
 const CreateProblemPage = () => {
+  const router = useRouter();
+
   usePageNavigation({
     title: "Create New Problem",
     breadcrumbs: [
@@ -45,20 +50,37 @@ function generateProblem() {
     });
   };
 
-  const headerActions = (
-    <div className="flex justify-end">
-      <Button onClick={handleSave} disabled={isPending}>
-        {isPending ? "Saving..." : "Save Problem"}
-      </Button>
-    </div>
+  const handleBack = () => {
+    router.push("/dashboard/problems");
+  };
+
+  const hasChanges = code !== defaultCode;
+
+  const toolbar = (
+    <ProblemToolbar
+      hasUnsavedChanges={hasChanges}
+      onSave={handleSave}
+      isSaving={isPending}
+      saveDisabled={!code?.trim()}
+      onBack={handleBack}
+      backLabel="Back to Problems"
+      code={code}
+    />
   );
+
+  const status = hasChanges
+    ? { label: "Modified", variant: "outline" as const }
+    : { label: "New Problem", variant: "secondary" as const };
 
   return (
     <ProblemEditorLayout
       code={code}
       onCodeChange={setCode}
       defaultValue={defaultCode}
-      headerActions={headerActions}
+      title="Create New Problem"
+      subtitle="Write your JavaScript function to generate problems"
+      status={status}
+      toolbar={toolbar}
     />
   );
 };

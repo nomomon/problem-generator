@@ -1,24 +1,14 @@
 "use client";
 
-import { ProblemEditorLayout } from "@/components/problem-editor/problem-editor-layout";
+import {
+  ProblemEditorLayout,
+  ProblemToolbar,
+} from "@/components/problem-editor";
 import { usePageNavigation } from "@/hooks/use-page-navigation";
 import { useState, useEffect, useCallback, use } from "react";
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { updateProblem, deleteProblem } from "../actions";
 import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Trash2 } from "lucide-react";
 
 interface ProblemPageProps {
   params: Promise<{
@@ -111,6 +101,10 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
     setHasUnsavedChanges(code !== problem?.functionJs);
   };
 
+  const handleBack = () => {
+    router.push("/dashboard/problems");
+  };
+
   // Add keyboard shortcut for saving
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -128,87 +122,48 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
 
   if (loading) {
     return (
-      <div className="p-6 h-[80vh] flex items-center justify-center">
-        <div>Loading problem...</div>
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-muted-foreground">Loading problem...</div>
       </div>
     );
   }
 
   if (!problem) {
     return (
-      <div className="p-6 h-[80vh] flex flex-col items-center justify-center">
-        <div className="mb-4">Problem not found</div>
-        <Button onClick={() => router.push("/dashboard/problems")}>
-          Back to Problems
-        </Button>
+      <div className="h-screen flex flex-col items-center justify-center">
+        <div className="mb-4 text-muted-foreground">Problem not found</div>
+        <ProblemToolbar onBack={handleBack} backLabel="Back to Problems" />
       </div>
     );
   }
 
-  const headerActions = (
-    <div className="flex justify-between items-center">
-      <div>
-        <h1 className="text-2xl font-bold">Problem #{problem.id}</h1>
-        <p className="text-sm text-muted-foreground">
-          Created: {new Date(problem.createdAt).toLocaleDateString()}
-        </p>
-      </div>
-      <div className="flex gap-2">
-        <Button
-          onClick={handleSave}
-          disabled={!hasUnsavedChanges || isSaving}
-          variant={hasUnsavedChanges ? "default" : "secondary"}
-        >
-          {isSaving
-            ? "Saving..."
-            : hasUnsavedChanges
-              ? "Save Changes"
-              : "Saved"}
-        </Button>
-
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="destructive" disabled={isDeleting}>
-              <Trash2 className="h-4 w-4 mr-2" />
-              {isDeleting ? "Deleting..." : "Delete"}
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete Problem</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to delete Problem #{problem.id}? This
-                action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleDelete}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              >
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-
-        <Button
-          onClick={() => router.push("/dashboard/problems")}
-          variant="outline"
-        >
-          Back to Problems
-        </Button>
-      </div>
-    </div>
+  const toolbar = (
+    <ProblemToolbar
+      hasUnsavedChanges={hasUnsavedChanges}
+      onSave={handleSave}
+      isSaving={isSaving}
+      saveDisabled={!hasUnsavedChanges}
+      onDelete={handleDelete}
+      isDeleting={isDeleting}
+      onBack={handleBack}
+      backLabel="Back to Problems"
+      code={currentCode}
+    />
   );
+
+  const status = hasUnsavedChanges
+    ? { label: "Unsaved Changes", variant: "outline" as const }
+    : { label: "Saved", variant: "secondary" as const };
 
   return (
     <ProblemEditorLayout
       code={currentCode}
       onCodeChange={handleCodeChange}
       defaultValue={problem.functionJs}
-      headerActions={headerActions}
+      title={`Problem #${problem.id}`}
+      subtitle={`Created: ${new Date(problem.createdAt).toLocaleDateString()}`}
+      status={status}
+      toolbar={toolbar}
     />
   );
 };
