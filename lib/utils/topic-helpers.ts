@@ -28,25 +28,13 @@ export async function getOrCreateTopics(
   // Create new topics if needed
   let newTopics: TopicData[] = [];
   if (newTopicNames.length > 0) {
+    // Use INSERT ... ON CONFLICT ... DO UPDATE to always return rows
     newTopics = await sql<TopicData[]>`
       INSERT INTO topics (name)
-      VALUES ${sql(newTopicNames.map((name) => ({ name })))}
-      ON CONFLICT (name) DO NOTHING
+      VALUES ${sql(newTopicNames.map((name) => [name]))}
+      ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
       RETURNING id, name, created_at as "createdAt"
     `;
-
-    // If some topics already existed due to race conditions, fetch them
-    if (newTopics.length < newTopicNames.length) {
-      const missingNames = newTopicNames.filter(
-        (name) => !newTopics.some((t) => t.name === name),
-      );
-      const existingNewTopics = await sql<TopicData[]>`
-        SELECT id, name, created_at as "createdAt"
-        FROM topics 
-        WHERE name = ANY(${missingNames})
-      `;
-      newTopics = [...newTopics, ...existingNewTopics];
-    }
   }
 
   return [...existingTopics, ...newTopics];
