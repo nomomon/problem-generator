@@ -134,7 +134,7 @@ export function ProblemEditorLayout({
                 <ProblemDetailsForm
                   details={details || {}}
                   onDetailsChange={onDetailsChange}
-                  className="h-full overflow-y-auto"
+                  className="h-full overflow-y-auto rounded-r-none"
                 />
               </ResizablePanel>
               <ResizableHandle withHandle className="w-0" />
@@ -145,14 +145,14 @@ export function ProblemEditorLayout({
           <ResizablePanel
             defaultSize={onDetailsChange ? 37.5 : 50}
             minSize={30}
-            className="p-4 pr-0"
+            className="p-4 px-0"
           >
-            <Card className="h-full border shadow-sm flex flex-col rounded-r-none">
+            <Card className="gap-0 h-full border shadow-sm flex flex-col rounded-none py-0">
               <PanelHeader
                 title="Code Editor"
                 description="Write your JavaScript function"
               />
-              <div className="flex-1 min-h-0 p-4">
+              <div className="flex-1 min-h-0">
                 <CodeEditor
                   className="h-full"
                   value={code}
@@ -174,7 +174,7 @@ export function ProblemEditorLayout({
             minSize={30}
             className="p-4 pl-0"
           >
-            <Card className="h-full border shadow-sm flex flex-col rounded-l-none">
+            <Card className="gap-2 h-full border shadow-sm flex flex-col rounded-l-none py-0">
               <PanelHeader title="Output" description="Test and view results" />
               <div className="flex-1 min-h-0 p-4">
                 <CodeRunnerPanel

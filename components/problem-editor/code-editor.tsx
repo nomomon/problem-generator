@@ -7,7 +7,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils/index";
 
 const editorVariants = cva(
-  "border rounded-lg overflow-hidden focus-within:border-ring focus-within:ring-ring/20 focus-within:ring-2 transition-all duration-200",
+  "border overflow-hidden focus-within:border-ring focus-within:ring-ring/20 focus-within:ring-2 transition-all duration-200",
   {
     variants: {
       variant: {
