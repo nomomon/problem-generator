@@ -26,6 +26,7 @@ interface ProblemDetailsFormProps {
   details: ProblemDetails;
   onDetailsChange: (details: ProblemDetails) => void;
   className?: string;
+  noCard?: boolean;
 }
 
 export function ProblemDetailsForm({
@@ -81,14 +82,7 @@ export function ProblemDetailsForm({
   };
 
   return (
-    <Card className={`p-4 space-y-4 ${className}`}>
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Problem Details</h3>
-        <p className="text-sm text-muted-foreground">
-          Configure the metadata and properties for this problem.
-        </p>
-      </div>
-
+    <div className={`space-y-4 ${className}`}>
       {/* Problem Name */}
       <div className="space-y-2">
         <Label htmlFor="problem-name">Problem Name</Label>
@@ -201,6 +195,6 @@ export function ProblemDetailsForm({
           </div>
         )}
       </div>
-    </Card>
+    </div>
   );
 }

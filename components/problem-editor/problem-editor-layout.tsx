@@ -131,11 +131,20 @@ export function ProblemEditorLayout({
                 maxSize={40}
                 className="p-4 pr-0"
               >
-                <ProblemDetailsForm
-                  details={details || {}}
-                  onDetailsChange={onDetailsChange}
-                  className="h-full overflow-y-auto rounded-r-none"
-                />
+                <Card className="gap-0 h-full border shadow-sm flex flex-col rounded-r-none  py-0">
+                  <PanelHeader
+                    title="Details"
+                    description="Configure metadata"
+                  />
+                  <div className="flex-1 min-h-0">
+                    <ProblemDetailsForm
+                      details={details || {}}
+                      onDetailsChange={onDetailsChange}
+                      className="h-full overflow-y-auto p-4"
+                      noCard
+                    />
+                  </div>
+                </Card>
               </ResizablePanel>
               <ResizableHandle withHandle className="w-0" />
             </>
