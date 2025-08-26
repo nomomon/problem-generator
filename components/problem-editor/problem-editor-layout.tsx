@@ -204,11 +204,7 @@ export function ProblemEditorLayout({
 
                   <ResizableHandle className="h-0" />
 
-                  <ResizablePanel
-                    defaultSize={35}
-                    minSize={20}
-                    className="p-4 pt-0"
-                  >
+                  <ResizablePanel defaultSize={35} minSize={20} className="">
                     <div className="h-full min-h-0 overflow-y-auto">
                       <Chat />
                     </div>
