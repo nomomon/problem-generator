@@ -9,8 +9,7 @@ import {
   smoothStream,
 } from "ai";
 
-// Allow streaming responses up to 30 seconds
-export const maxDuration = 30;
+export const maxDuration = 300;
 
 export async function POST(req: Request) {
   const { messages, model }: { messages: UIMessage[]; model: string } =
@@ -20,9 +19,9 @@ export async function POST(req: Request) {
     model: openai(model),
     messages: convertToModelMessages(messages),
     system: prompt,
+    stopWhen: stepCountIs(100),
     experimental_transform: smoothStream(),
     tools,
-    stopWhen: stepCountIs(50),
   });
 
   // send sources and reasoning back to the client

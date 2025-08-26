@@ -1,3 +1,3 @@
-import read_file from "./read_file";
+import file_editor_tools from "./file_editor";
 
-export default { read_file };
+export default { ...file_editor_tools };

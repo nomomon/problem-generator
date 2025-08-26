@@ -206,7 +206,7 @@ export function ProblemEditorLayout({
 
                   <ResizablePanel defaultSize={80} minSize={20} className="">
                     <div className="h-full min-h-0 overflow-y-auto">
-                      <Chat />
+                      <Chat code={code} onCodeChange={onCodeChange} />
                     </div>
                   </ResizablePanel>
                 </ResizablePanelGroup>

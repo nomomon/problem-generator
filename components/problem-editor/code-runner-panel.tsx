@@ -51,7 +51,11 @@ export const CodeRunnerPanel = ({
   // Add keyboard shortcut for running code
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key === "r") {
+      if (
+        (event.metaKey || event.ctrlKey) &&
+        event.shiftKey &&
+        event.key === "r"
+      ) {
         event.preventDefault();
         if (!isRunning && code && !disabled) {
           runCode();

@@ -19,7 +19,7 @@ import {
   PromptInputToolbar,
   PromptInputTools,
 } from "@/components/ai-elements/prompt-input";
-import { useState } from "react";
+import { FC, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { Response } from "@/components/ai-elements/response";
 import {
@@ -28,11 +28,18 @@ import {
   ReasoningTrigger,
 } from "@/components/ai-elements/reasoning";
 import { Loader } from "@/components/ai-elements/loader";
+import {
+  Tool,
+  ToolContent,
+  ToolHeader,
+  ToolInput,
+  ToolOutput,
+} from "@/components/ai-elements/tool";
 
 const models = [
   {
-    name: "GPT-4o",
-    value: "gpt-4o",
+    name: "GPT-4.1",
+    value: "gpt-4.1",
   },
   {
     name: "GPT-5 mini",
@@ -40,10 +47,59 @@ const models = [
   },
 ];
 
-const Chat = () => {
+interface ChatProps {
+  code: string | undefined;
+  onCodeChange: (code: string | undefined) => void;
+}
+
+const Chat: FC<ChatProps> = ({ code, onCodeChange }) => {
   const [input, setInput] = useState("");
   const [model, setModel] = useState<string>(models[0].value);
-  const { messages, sendMessage, status } = useChat() as any;
+  const { messages, sendMessage, status, addToolResult } = useChat({
+    async onToolCall({ toolCall }) {
+      if (toolCall.dynamic) return;
+      if (toolCall.toolName == "read_file") {
+        addToolResult({
+          tool: "read_file",
+          toolCallId: toolCall.toolCallId,
+          output: code ?? "// Empty file",
+        });
+      }
+      if (toolCall.toolName === "replace_string_in_file") {
+        if (typeof toolCall.input === "object" && toolCall.input !== null) {
+          const oldString = (toolCall.input as { old_string: string })
+            .old_string;
+          const newString = (toolCall.input as { new_string: string })
+            .new_string;
+          if (
+            typeof oldString === "string" &&
+            typeof newString === "string" &&
+            typeof code === "string"
+          ) {
+            const updatedCode = code.split(oldString).join(newString);
+            onCodeChange(updatedCode);
+            addToolResult({
+              tool: "replace_string_in_file",
+              toolCallId: toolCall.toolCallId,
+              output: updatedCode,
+            });
+          } else {
+            addToolResult({
+              tool: "replace_string_in_file",
+              toolCallId: toolCall.toolCallId,
+              output: "ERROR: Invalid parameters or code is undefined",
+            });
+          }
+        } else {
+          addToolResult({
+            tool: "replace_string_in_file",
+            toolCallId: toolCall.toolCallId,
+            output: "ERROR: Invalid input structure",
+          });
+        }
+      }
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,6 +152,28 @@ const Chat = () => {
                                 {part.text}
                               </ReasoningContent>
                             </Reasoning>
+                          );
+                        case "tool-read_file":
+                        case "tool-replace_string_in_file":
+                          return (
+                            <div
+                              key={`${message.id}-${i}`}
+                              className="space-y-4"
+                            >
+                              <Tool>
+                                <ToolHeader
+                                  type={part.type}
+                                  state={part.state}
+                                />
+                                <ToolContent>
+                                  <ToolInput input={part.input} />
+                                  <ToolOutput
+                                    errorText={part.errorText}
+                                    output={part.output}
+                                  />
+                                </ToolContent>
+                              </Tool>
+                            </div>
                           );
                         default:
                           return null;
