@@ -22,13 +22,6 @@ import {
 import { useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { Response } from "@/components/ai-elements/response";
-import { GlobeIcon } from "lucide-react";
-import {
-  Source,
-  Sources,
-  SourcesContent,
-  SourcesTrigger,
-} from "@/components/ai-elements/source";
 import {
   Reasoning,
   ReasoningContent,

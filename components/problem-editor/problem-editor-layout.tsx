@@ -189,8 +189,8 @@ export function ProblemEditorLayout({
               <div className="flex-1 min-h-0">
                 <ResizablePanelGroup direction="vertical" className="h-full">
                   <ResizablePanel
-                    defaultSize={40}
-                    minSize={40}
+                    defaultSize={20}
+                    minSize={20}
                     className="p-4 px-0"
                   >
                     <div className="px-4 h-full min-h-0">
@@ -204,7 +204,7 @@ export function ProblemEditorLayout({
 
                   <ResizableHandle className="h-0" />
 
-                  <ResizablePanel defaultSize={60} minSize={20} className="">
+                  <ResizablePanel defaultSize={80} minSize={20} className="">
                     <div className="h-full min-h-0 overflow-y-auto">
                       <Chat />
                     </div>
