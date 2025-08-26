@@ -15,6 +15,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ReactNode } from "react";
+import Chat from "./chat";
 
 interface ProblemEditorLayoutProps {
   code: string | undefined;
@@ -185,12 +186,34 @@ export function ProblemEditorLayout({
           >
             <Card className="gap-2 h-full border shadow-sm flex flex-col rounded-l-none py-0">
               <PanelHeader title="Output" description="Test and view results" />
-              <div className="flex-1 min-h-0 p-4">
-                <CodeRunnerPanel
-                  code={code}
-                  tailCode={tailCode}
-                  className="h-full"
-                />
+              <div className="flex-1 min-h-0">
+                <ResizablePanelGroup direction="vertical" className="h-full">
+                  <ResizablePanel
+                    defaultSize={65}
+                    minSize={40}
+                    className="p-4 px-0"
+                  >
+                    <div className="px-4 h-full min-h-0">
+                      <CodeRunnerPanel
+                        code={code}
+                        tailCode={tailCode}
+                        className="h-full"
+                      />
+                    </div>
+                  </ResizablePanel>
+
+                  <ResizableHandle className="h-0" />
+
+                  <ResizablePanel
+                    defaultSize={35}
+                    minSize={20}
+                    className="p-4 pt-0"
+                  >
+                    <div className="h-full min-h-0 overflow-y-auto">
+                      <Chat />
+                    </div>
+                  </ResizablePanel>
+                </ResizablePanelGroup>
               </div>
             </Card>
           </ResizablePanel>
