@@ -26,6 +26,11 @@ type ProblemData = {
   topics?: string[];
   createdAt: string;
   authorId: string;
+  sourceId?: number | null;
+  sourceName?: string | null;
+  sourceEditionId?: number | null;
+  sourceEditionYear?: number | null;
+  sourceEditionExtra?: string | null;
 };
 
 const ProblemPage = ({ params }: ProblemPageProps) => {
@@ -61,6 +66,10 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
           assets: data.assets || undefined,
           difficulty: data.difficulty,
           topics: data.topics,
+          sourceId: data.sourceId || undefined,
+          sourceName: data.sourceName || undefined,
+          sourceEditionYear: data.sourceEditionYear || undefined,
+          sourceEditionExtra: data.sourceEditionExtra || undefined,
         });
       } catch (error) {
         console.error("Error fetching problem:", error);

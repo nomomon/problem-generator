@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -20,6 +20,11 @@ export type ProblemDetails = {
   assets?: string[];
   difficulty?: "easy" | "medium" | "hard" | null;
   topics?: string[];
+  // New source fields
+  sourceId?: number;
+  sourceName?: string;
+  sourceEditionYear?: number | null;
+  sourceEditionExtra?: string | null;
 };
 
 interface ProblemDetailsFormProps {
@@ -34,6 +39,15 @@ export function ProblemDetailsForm({
   onDetailsChange,
   className = "",
 }: ProblemDetailsFormProps) {
+  const [sources, setSources] = useState<Array<{ id: number; name: string }>>(
+    [],
+  );
+  const [selectedSourceId, setSelectedSourceId] = useState<string>(
+    details.sourceId ? String(details.sourceId) : "",
+  );
+  const [newSourceNameLocal, setNewSourceNameLocal] = useState(
+    details.sourceName || "",
+  );
   const [newTopic, setNewTopic] = useState("");
   const [newAsset, setNewAsset] = useState("");
 
@@ -70,6 +84,77 @@ export function ProblemDetailsForm({
       onDetailsChange({ ...details, assets: updatedAssets });
       setNewAsset("");
     }
+  };
+
+  // Fetch sources for dropdown
+  useEffect(() => {
+    let cancelled = false;
+    const fetchSources = async () => {
+      try {
+        const res = await fetch("/api/sources");
+        if (!res.ok) return;
+        const json = await res.json();
+        if (!cancelled) setSources(json.sources || []);
+      } catch (e) {
+        // ignore
+      }
+    };
+
+    fetchSources();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Handle selection or creation of source
+  const handleSelectSource = (value: string) => {
+    if (value === "" || value === "__none__") {
+      // cleared selection
+      setSelectedSourceId("");
+      onDetailsChange({
+        ...details,
+        sourceId: undefined,
+        sourceName: undefined,
+        sourceEditionYear: undefined,
+        sourceEditionExtra: undefined,
+      });
+      setNewSourceNameLocal("");
+      return;
+    }
+
+    setSelectedSourceId(value);
+    const id = Number(value);
+    const source = sources.find((s) => s.id === id);
+    onDetailsChange({
+      ...details,
+      sourceId: id,
+      sourceName: undefined,
+    });
+    setNewSourceNameLocal("");
+  };
+
+  const handleNewSourceName = (value: string) => {
+    setNewSourceNameLocal(value);
+    if (value.trim()) {
+      // using a new source; clear selected id
+      setSelectedSourceId("");
+      onDetailsChange({
+        ...details,
+        sourceId: undefined,
+        sourceName: value.trim(),
+      });
+    } else {
+      onDetailsChange({ ...details, sourceName: undefined });
+    }
+  };
+
+  const handleEditionYearChange = (value: string) => {
+    const year = value === "" ? undefined : Number(value);
+    onDetailsChange({ ...details, sourceEditionYear: year });
+  };
+
+  const handleEditionExtraChange = (value: string) => {
+    onDetailsChange({ ...details, sourceEditionExtra: value || undefined });
   };
 
   const removeAsset = (assetToRemove: string) => {
@@ -194,6 +279,50 @@ export function ProblemDetailsForm({
             ))}
           </div>
         )}
+
+        {/* Source */}
+        <div className="space-y-2">
+          <Label>Source</Label>
+          <div className="flex gap-2">
+            <Select value={selectedSourceId} onValueChange={handleSelectSource}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a source or add new" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">None</SelectItem>
+                {sources.map((s) => (
+                  <SelectItem key={s.id} value={String(s.id)}>
+                    {s.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input
+              placeholder="Or add new source (e.g. IMO)"
+              value={newSourceNameLocal}
+              onChange={(e) => handleNewSourceName(e.target.value)}
+            />
+          </div>
+
+          {(selectedSourceId || newSourceNameLocal) && (
+            <div className="space-y-2 mt-2">
+              <Label>Edition (optional)</Label>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Year (e.g. 2020)"
+                  type="number"
+                  value={details.sourceEditionYear ?? ""}
+                  onChange={(e) => handleEditionYearChange(e.target.value)}
+                />
+                <Input
+                  placeholder="Extra info (Round 2, Fall Session)"
+                  value={details.sourceEditionExtra || ""}
+                  onChange={(e) => handleEditionExtraChange(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

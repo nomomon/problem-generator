@@ -31,6 +31,15 @@ export const problems = pgTable("problems", {
   name: text("name"),
   assets: text("assets").array(), // Array of file URLs
   difficulty: difficultyEnum("difficulty"), // Can be null
+
+  sourceId: bigint("source_id", { mode: "number" }).references(
+    () => sources.id,
+    { onDelete: "set null" },
+  ),
+  sourceEditionId: bigint("source_edition_id", { mode: "number" }).references(
+    () => sourceEditions.id,
+    { onDelete: "set null" },
+  ),
 });
 
 export const topics = pgTable("topics", {
@@ -64,3 +73,36 @@ export const problemTopics = pgTable(
     };
   },
 );
+
+export const sources = pgTable("sources", {
+  id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+    name: "sources_id_seq",
+    startWith: 1,
+    increment: 1,
+    minValue: 1,
+    cache: 1,
+  }),
+  name: text("name").notNull().unique(), // e.g. "IMO"
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+    .defaultNow()
+    .notNull(),
+});
+
+// Table for specific editions/instances of a source (e.g. "IMO 2020")
+export const sourceEditions = pgTable("source_editions", {
+  id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+    name: "source_editions_id_seq",
+    startWith: 1,
+    increment: 1,
+    minValue: 1,
+    cache: 1,
+  }),
+  sourceId: bigint("source_id", { mode: "number" })
+    .notNull()
+    .references(() => sources.id, { onDelete: "cascade" }),
+  year: bigint("year", { mode: "number" }).notNull(), // or integer
+  extraInfo: text("extra_info"), // optional, like "Fall session" or "Round 2"
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+    .defaultNow()
+    .notNull(),
+});

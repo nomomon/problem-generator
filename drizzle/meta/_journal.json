@@ -15,6 +15,13 @@
       "when": 1755968400848,
       "tag": "0001_overrated_magdalene",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1756299677929,
+      "tag": "0002_goofy_hammerhead",
+      "breakpoints": true
     }
   ]
 }

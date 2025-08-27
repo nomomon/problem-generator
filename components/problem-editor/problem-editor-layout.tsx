@@ -99,6 +99,22 @@ export function ProblemEditorLayout({
                     details.difficulty.slice(1)}
                 </Badge>
               )}
+              {/* Source display */}
+              {(details?.sourceName || details?.sourceId) && (
+                <div className="ml-3 text-sm text-muted-foreground">
+                  {"Source: "}
+                  {details?.sourceName
+                    ? details.sourceName
+                    : // If only id is present, just show 'Source #id'
+                      `Source #${details.sourceId}`}
+                  {details?.sourceEditionYear !== undefined &&
+                  details?.sourceEditionYear !== null
+                    ? ` (${details.sourceEditionYear})`
+                    : details?.sourceName || details?.sourceId
+                      ? " (Unknown year)"
+                      : null}
+                </div>
+              )}
             </div>
 
             {/* Toolbar */}

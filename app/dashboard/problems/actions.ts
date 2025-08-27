@@ -11,6 +11,11 @@ export type ProblemData = {
   assets?: string[];
   difficulty?: "easy" | "medium" | "hard" | null;
   topics?: string[];
+  // Source fields
+  sourceId?: number;
+  sourceName?: string; // create new source if provided
+  sourceEditionYear?: number | null;
+  sourceEditionExtra?: string | null;
 };
 
 export async function createProblem(
@@ -59,6 +64,45 @@ export async function createProblem(
     if (problemData?.topics && problemData.topics.length > 0) {
       await updateProblemTopics(sql, newProblemId, problemData.topics);
     }
+    // Handle source and edition if provided
+    if (problemData?.sourceName || problemData?.sourceId) {
+      // If sourceName provided, insert or get existing
+      let sourceId = problemData.sourceId;
+      if (!sourceId && problemData.sourceName) {
+        const existing = await sql`
+          SELECT id FROM sources WHERE name = ${problemData.sourceName}
+        `;
+        if (existing.length > 0) {
+          sourceId = existing[0].id as number;
+        } else {
+          const ins = await sql`
+            INSERT INTO sources (name) VALUES (${problemData.sourceName}) RETURNING id
+          `;
+          sourceId = ins[0].id as number;
+        }
+      }
+
+      let editionId: number | null = null;
+      if (sourceId && problemData.sourceEditionYear) {
+        // try find existing edition
+        const exEd = await sql`
+          SELECT id FROM source_editions WHERE source_id = ${sourceId} AND year = ${problemData.sourceEditionYear} AND extra_info = ${problemData.sourceEditionExtra ?? null}
+        `;
+        if (exEd.length > 0) {
+          editionId = exEd[0].id as number;
+        } else {
+          const insEd = await sql`
+            INSERT INTO source_editions (source_id, year, extra_info) VALUES (${sourceId}, ${problemData.sourceEditionYear}, ${problemData.sourceEditionExtra ?? null}) RETURNING id
+          `;
+          editionId = insEd[0].id as number;
+        }
+      }
+
+      // update problem with source ids
+      await sql`
+        UPDATE problems SET source_id = ${sourceId || null}, source_edition_id = ${editionId || null} WHERE id = ${newProblemId}
+      `;
+    }
   } catch (error) {
     console.error("Error creating problem:", error);
     throw new Error("Failed to create problem");
@@ -102,6 +146,7 @@ export async function updateProblem(
         name = ${problemData?.name || null},
         assets = ${problemData?.assets || null},
         difficulty = ${problemData?.difficulty || null}
+  -- source fields updated below
       WHERE id = ${problemId} AND author_id = ${user.id}
       RETURNING id
     `;
@@ -113,6 +158,47 @@ export async function updateProblem(
     // Handle topic associations
     if (problemData?.topics !== undefined) {
       await updateProblemTopics(sql, parseInt(problemId), problemData.topics);
+    }
+
+    // Handle source updates
+    if (
+      problemData?.sourceName ||
+      problemData?.sourceId ||
+      problemData?.sourceEditionYear !== undefined
+    ) {
+      let sourceId = problemData.sourceId;
+      if (!sourceId && problemData.sourceName) {
+        const existing = await sql`
+          SELECT id FROM sources WHERE name = ${problemData.sourceName}
+        `;
+        if (existing.length > 0) {
+          sourceId = existing[0].id as number;
+        } else {
+          const ins = await sql`
+            INSERT INTO sources (name) VALUES (${problemData.sourceName}) RETURNING id
+          `;
+          sourceId = ins[0].id as number;
+        }
+      }
+
+      let editionId: number | null = null;
+      if (sourceId && problemData.sourceEditionYear) {
+        const exEd = await sql`
+          SELECT id FROM source_editions WHERE source_id = ${sourceId} AND year = ${problemData.sourceEditionYear} AND extra_info = ${problemData.sourceEditionExtra ?? null}
+        `;
+        if (exEd.length > 0) {
+          editionId = exEd[0].id as number;
+        } else {
+          const insEd = await sql`
+            INSERT INTO source_editions (source_id, year, extra_info) VALUES (${sourceId}, ${problemData.sourceEditionYear}, ${problemData.sourceEditionExtra ?? null}) RETURNING id
+          `;
+          editionId = insEd[0].id as number;
+        }
+      }
+
+      await sql`
+        UPDATE problems SET source_id = ${sourceId || null}, source_edition_id = ${editionId || null} WHERE id = ${problemId} AND author_id = ${user.id}
+      `;
     }
 
     // Revalidate the current problem page
@@ -185,18 +271,25 @@ export async function getProblemDetails(problemId: string) {
   const sql = postgres(process.env.DATABASE_URL!);
 
   try {
-    // Get the problem details
+    // Get the problem details including source and edition info
     const problemResult = await sql`
       SELECT 
-        id, 
-        function_js, 
-        name, 
-        assets, 
-        difficulty,
-        created_at as "createdAt",
-        author_id as "authorId"
-      FROM problems 
-      WHERE id = ${problemId} AND author_id = ${user.id}
+        p.id, 
+        p.function_js, 
+        p.name, 
+        p.assets, 
+        p.difficulty,
+        p.created_at as "createdAt",
+        p.author_id as "authorId",
+        s.id as source_id,
+        s.name as source_name,
+        se.id as source_edition_id,
+        se.year as source_edition_year,
+        se.extra_info as source_edition_extra
+      FROM problems p
+      LEFT JOIN sources s ON p.source_id = s.id
+      LEFT JOIN source_editions se ON p.source_edition_id = se.id
+      WHERE p.id = ${problemId} AND p.author_id = ${user.id}
     `;
 
     if (problemResult.length === 0) {
@@ -211,6 +304,11 @@ export async function getProblemDetails(problemId: string) {
       difficulty: "easy" | "medium" | "hard" | null;
       createdAt: string;
       authorId: string;
+      source_id?: number | null;
+      source_name?: string | null;
+      source_edition_id?: number | null;
+      source_edition_year?: number | null;
+      source_edition_extra?: string | null;
     };
 
     // Get associated topics
@@ -227,6 +325,11 @@ export async function getProblemDetails(problemId: string) {
     return {
       ...problem,
       topics: topics.length > 0 ? topics : undefined,
+      sourceId: problem.source_id || undefined,
+      sourceName: problem.source_name || undefined,
+      sourceEditionId: problem.source_edition_id || undefined,
+      sourceEditionYear: problem.source_edition_year || undefined,
+      sourceEditionExtra: problem.source_edition_extra || undefined,
     };
   } catch (error) {
     console.error("Error fetching problem details:", error);
