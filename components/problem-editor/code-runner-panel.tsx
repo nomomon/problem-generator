@@ -51,11 +51,7 @@ export const CodeRunnerPanel = ({
   // Add keyboard shortcut for running code
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        (event.metaKey || event.ctrlKey) &&
-        event.shiftKey &&
-        event.key === "r"
-      ) {
+      if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
         event.preventDefault();
         if (!isRunning && code && !disabled) {
           runCode();
@@ -151,8 +147,19 @@ export const CodeRunnerPanel = ({
                     Return Value
                   </h4>
                   <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-md p-3 text-sm font-mono max-h-32 overflow-auto">
+                    <div className="mb-2 font-semibold text-green-800 dark:text-green-400">
+                      Problem text
+                    </div>
                     <pre className="text-green-700 dark:text-green-300 whitespace-pre-wrap">
-                      {result.output}
+                      {JSON.parse(result.output).text}
+                    </pre>
+                  </div>
+                  <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-md p-3 text-sm font-mono max-h-32 overflow-auto">
+                    <div className="mb-2 font-semibold text-green-800 dark:text-green-400">
+                      Answer text
+                    </div>
+                    <pre className="text-green-700 dark:text-green-300 whitespace-pre-wrap">
+                      {JSON.parse(result.output).answerText}
                     </pre>
                   </div>
                 </div>
@@ -186,7 +193,7 @@ export const CodeRunnerPanel = ({
                 Click "Run Code" to execute your JavaScript
               </div>
               <div className="text-xs text-muted-foreground mt-1">
-                Press ⌘R or use the button above
+                Press ⌘+Enter or use the button above
               </div>
             </div>
           )}

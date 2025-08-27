@@ -44,8 +44,8 @@ function generateProblem() {
 `.trim();
 
 const defaultTailCode = `
-const { text } = generateProblem();
-return text;`;
+const { text, answerText } = generateProblem();
+return { text, answerText };`;
 
 export function ProblemEditorLayout({
   code,
@@ -189,7 +189,7 @@ export function ProblemEditorLayout({
               <div className="flex-1 min-h-0">
                 <ResizablePanelGroup direction="vertical" className="h-full">
                   <ResizablePanel
-                    defaultSize={20}
+                    defaultSize={40}
                     minSize={20}
                     className="p-4 px-0"
                   >
@@ -204,7 +204,7 @@ export function ProblemEditorLayout({
 
                   <ResizableHandle className="h-0" />
 
-                  <ResizablePanel defaultSize={80} minSize={20} className="">
+                  <ResizablePanel defaultSize={60} minSize={20} className="">
                     <div className="h-full min-h-0 overflow-y-auto">
                       <Chat code={code} onCodeChange={onCodeChange} />
                     </div>
