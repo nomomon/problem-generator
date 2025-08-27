@@ -19,14 +19,12 @@ export async function POST(req: Request) {
     model: openai(model),
     messages: convertToModelMessages(messages),
     system: prompt,
-    stopWhen: stepCountIs(100),
+    stopWhen: stepCountIs(10),
     experimental_transform: smoothStream(),
     tools,
   });
 
-  // send sources and reasoning back to the client
   return result.toUIMessageStreamResponse({
-    sendSources: true,
     sendReasoning: true,
   });
 }

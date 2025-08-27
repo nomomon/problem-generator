@@ -19,7 +19,7 @@ import {
   PromptInputToolbar,
   PromptInputTools,
 } from "@/components/ai-elements/prompt-input";
-import { FC, useState } from "react";
+import React, { FC, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { Response } from "@/components/ai-elements/response";
 import {
@@ -49,7 +49,7 @@ const models = [
 
 interface ChatProps {
   code: string | undefined;
-  onCodeChange: (code: string | undefined) => void;
+  onCodeChange: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 const Chat: FC<ChatProps> = ({ code, onCodeChange }) => {
@@ -58,43 +58,85 @@ const Chat: FC<ChatProps> = ({ code, onCodeChange }) => {
   const { messages, sendMessage, status, addToolResult } = useChat({
     async onToolCall({ toolCall }) {
       if (toolCall.dynamic) return;
-      if (toolCall.toolName == "read_file") {
+
+      // ---------- read_file ----------
+      if (toolCall.toolName === "read_file") {
         addToolResult({
           tool: "read_file",
           toolCallId: toolCall.toolCallId,
           output: code ?? "// Empty file",
         });
       }
-      if (toolCall.toolName === "replace_string_in_file") {
-        if (typeof toolCall.input === "object" && toolCall.input !== null) {
-          const oldString = (toolCall.input as { old_string: string })
-            .old_string;
-          const newString = (toolCall.input as { new_string: string })
-            .new_string;
-          if (
-            typeof oldString === "string" &&
-            typeof newString === "string" &&
-            typeof code === "string"
-          ) {
-            const updatedCode = code.split(oldString).join(newString);
-            onCodeChange(updatedCode);
-            addToolResult({
-              tool: "replace_string_in_file",
-              toolCallId: toolCall.toolCallId,
-              output: updatedCode,
-            });
-          } else {
-            addToolResult({
-              tool: "replace_string_in_file",
-              toolCallId: toolCall.toolCallId,
-              output: "ERROR: Invalid parameters or code is undefined",
-            });
-          }
+
+      // ---------- update_problem_code ----------
+      if (toolCall.toolName === "update_problem_code") {
+        const { old_code, new_code } = toolCall.input as {
+          old_code: string;
+          new_code: string;
+        };
+
+        if (
+          typeof old_code === "string" &&
+          typeof new_code === "string" &&
+          typeof code === "string"
+        ) {
+          onCodeChange((oldCode) => {
+            if (!oldCode) return oldCode;
+            return oldCode.replace(old_code, new_code); // single replace
+          });
+          addToolResult({
+            tool: "update_problem_code",
+            toolCallId: toolCall.toolCallId,
+            output: "SUCCESS: Code block replaced successfully",
+          });
         } else {
           addToolResult({
-            tool: "replace_string_in_file",
+            tool: "update_problem_code",
             toolCallId: toolCall.toolCallId,
-            output: "ERROR: Invalid input structure",
+            output: "ERROR: Invalid parameters or code is undefined",
+          });
+        }
+      }
+
+      // ---------- patch_code ----------
+      if (toolCall.toolName === "patch_code") {
+        const { target, replacement, mode } = toolCall.input as {
+          target: string;
+          replacement: string;
+          mode: "before" | "after" | "replace";
+        };
+
+        if (
+          typeof target === "string" &&
+          typeof replacement === "string" &&
+          typeof mode === "string" &&
+          typeof code === "string"
+        ) {
+          onCodeChange((oldCode) => {
+            if (!oldCode) return oldCode;
+
+            switch (mode) {
+              case "before":
+                return oldCode.replace(target, replacement + "\n" + target);
+              case "after":
+                return oldCode.replace(target, target + "\n" + replacement);
+              case "replace":
+                return oldCode.replace(target, replacement);
+              default:
+                return oldCode;
+            }
+          });
+
+          addToolResult({
+            tool: "patch_code",
+            toolCallId: toolCall.toolCallId,
+            output: `SUCCESS: Applied ${mode} patch around target "${target}"`,
+          });
+        } else {
+          addToolResult({
+            tool: "patch_code",
+            toolCallId: toolCall.toolCallId,
+            output: "ERROR: Invalid parameters or code is undefined",
           });
         }
       }
@@ -155,6 +197,7 @@ const Chat: FC<ChatProps> = ({ code, onCodeChange }) => {
                           );
                         case "tool-read_file":
                         case "tool-replace_string_in_file":
+                        case "tool-patch_code":
                           return (
                             <div
                               key={`${message.id}-${i}`}

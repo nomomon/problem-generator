@@ -141,11 +141,15 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
       setIsDeleting(false);
     }
   };
-
-  const handleCodeChange = (newCode: string | undefined) => {
-    const code = newCode || "";
-    setCurrentCode(code);
-    setHasUnsavedChanges(checkForChanges(code, currentDetails));
+  const handleCodeChange: React.Dispatch<
+    React.SetStateAction<string | undefined>
+  > = (input) => {
+    setCurrentCode((prevCode) => {
+      const nextCode = typeof input === "function" ? input(prevCode) : input;
+      const code = nextCode ?? "";
+      setHasUnsavedChanges(checkForChanges(code, currentDetails));
+      return code;
+    });
   };
 
   const handleDetailsChange = (newDetails: ProblemDetails) => {

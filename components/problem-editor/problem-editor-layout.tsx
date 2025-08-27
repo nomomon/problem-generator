@@ -19,7 +19,7 @@ import Chat from "./chat";
 
 interface ProblemEditorLayoutProps {
   code: string | undefined;
-  onCodeChange: (code: string | undefined) => void;
+  onCodeChange: React.Dispatch<React.SetStateAction<string | undefined>>;
   details?: ProblemDetails;
   onDetailsChange?: (details: ProblemDetails) => void;
   defaultValue?: string;
