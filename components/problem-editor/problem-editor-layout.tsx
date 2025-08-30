@@ -16,6 +16,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ReactNode } from "react";
 import Chat from "./chat";
+import { formatDifficulty } from "@/lib/utils";
 
 interface ProblemEditorLayoutProps {
   code: string | undefined;
@@ -95,8 +96,7 @@ export function ProblemEditorLayout({
                         : "destructive"
                   }
                 >
-                  {details.difficulty.charAt(0).toUpperCase() +
-                    details.difficulty.slice(1)}
+                  {formatDifficulty(details.difficulty)}
                 </Badge>
               )}
               {/* Source display */}

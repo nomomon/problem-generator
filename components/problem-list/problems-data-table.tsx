@@ -69,6 +69,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { formatDifficulty } from "@/lib/utils";
 
 export const problemSchema = z.object({
   id: z.number(),
@@ -205,7 +206,7 @@ export function ProblemsDataTable({
         const difficulty = row.getValue("difficulty") as string | null;
         return (
           <Badge variant={getDifficultyBadgeVariant(difficulty)}>
-            {difficulty || "Не указано"}
+            {formatDifficulty(difficulty || "Не указано")}
           </Badge>
         );
       },
