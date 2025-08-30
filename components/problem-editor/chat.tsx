@@ -63,7 +63,8 @@ const Chat: FC<ChatProps> = ({ code, onCodeChange }) => {
         addToolResult({
           tool: "read_file",
           toolCallId: toolCall.toolCallId,
-          output: code ?? "// Empty file",
+          output:
+            (code ?? "// Empty file") + "\n\n CONTINUE TO MAKE TOOL CALLS",
         });
       }
 
@@ -195,7 +196,7 @@ const Chat: FC<ChatProps> = ({ code, onCodeChange }) => {
                             </Reasoning>
                           );
                         case "tool-read_file":
-                        case "tool-replace_string_in_file":
+                        case "tool-update_problem_code":
                         case "tool-patch_code":
                           return (
                             <div
