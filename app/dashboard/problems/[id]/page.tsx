@@ -217,10 +217,10 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
   );
 
   const status = hasUnsavedChanges
-    ? { label: "Unsaved Changes", variant: "outline" as const }
-    : { label: "Saved", variant: "secondary" as const };
+    ? { label: "Несохранённые изменения", variant: "outline" as const }
+    : { label: "Сохранено", variant: "secondary" as const };
 
-  const displayTitle = currentDetails.name || `Problem #${problem.id}`;
+  const displayTitle = currentDetails.name || `Задача #${problem.id}`;
 
   return (
     <div className="h-full min-h-0 flex-1">
@@ -231,7 +231,7 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
         onDetailsChange={handleDetailsChange}
         defaultValue={problem.function_js || ""}
         title={displayTitle}
-        subtitle={`Created: ${new Date(problem.createdAt).toLocaleDateString()}`}
+        subtitle={`Cоздано: ${new Date(problem.createdAt).toLocaleDateString()}`}
         status={status}
         toolbar={toolbar}
       />

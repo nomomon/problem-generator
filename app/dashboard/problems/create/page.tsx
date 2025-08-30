@@ -26,7 +26,9 @@ const CreateProblemPage = () => {
   const defaultCode = `
 function generateProblem() {
     return {
-        text: "Problem text",
+        text: "Условие задачи",
+        answerText: "Ответ на задачу",
+        variables: {} // переменные задачи
     };
 }
 `.trim();
@@ -76,8 +78,8 @@ function generateProblem() {
   );
 
   const status = hasChanges
-    ? { label: "Modified", variant: "outline" as const }
-    : { label: "New Problem", variant: "secondary" as const };
+    ? { label: "Обновлено", variant: "outline" as const }
+    : { label: "Новая задача", variant: "secondary" as const };
 
   return (
     <div className="h-full">
@@ -87,8 +89,8 @@ function generateProblem() {
         details={details}
         onDetailsChange={setDetails}
         defaultValue={defaultCode}
-        title={details.name || "Create New Problem"}
-        subtitle="Write your JavaScript function to generate problems"
+        title={details.name || "Новая задача"}
+        subtitle="Напишите свою функцию JavaScript для создания проблем"
         status={status}
         toolbar={toolbar}
       />
