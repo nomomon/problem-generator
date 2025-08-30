@@ -174,7 +174,7 @@ const CodeEditor = React.forwardRef<HTMLDivElement, CodeEditorProps>(
         >
           <div className="flex h-full items-center justify-center">
             {loading || (
-              <div className="text-muted-foreground">Loading editor...</div>
+              <div className="text-muted-foreground">Загрузка редактора...</div>
             )}
           </div>
         </div>

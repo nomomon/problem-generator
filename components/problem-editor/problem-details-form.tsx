@@ -170,10 +170,10 @@ export function ProblemDetailsForm({
     <div className={`space-y-4 ${className}`}>
       {/* Problem Name */}
       <div className="space-y-2">
-        <Label htmlFor="problem-name">Problem Name</Label>
+        <Label htmlFor="problem-name">Название задачи</Label>
         <Input
           id="problem-name"
-          placeholder="Enter a descriptive name for the problem"
+          placeholder="Введите описательное название задачи"
           value={details.name || ""}
           onChange={(e) => handleNameChange(e.target.value)}
         />
@@ -181,7 +181,7 @@ export function ProblemDetailsForm({
 
       {/* Difficulty */}
       <div className="space-y-2">
-        <Label htmlFor="difficulty">Difficulty Level</Label>
+        <Label htmlFor="difficulty">Уровень сложности</Label>
         <Select
           value={details.difficulty || "none"}
           onValueChange={handleDifficultyChange}
@@ -190,20 +190,20 @@ export function ProblemDetailsForm({
             <SelectValue placeholder="Select difficulty level" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="none">No difficulty set</SelectItem>
-            <SelectItem value="easy">Easy</SelectItem>
-            <SelectItem value="medium">Medium</SelectItem>
-            <SelectItem value="hard">Hard</SelectItem>
+            <SelectItem value="none">Не задано</SelectItem>
+            <SelectItem value="easy">Легко</SelectItem>
+            <SelectItem value="medium">Средне</SelectItem>
+            <SelectItem value="hard">Сложно</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       {/* Topics */}
       <div className="space-y-2">
-        <Label>Topics</Label>
+        <Label>Темы</Label>
         <div className="flex gap-2">
           <Input
-            placeholder="Add a topic..."
+            placeholder="Добавить тему..."
             value={newTopic}
             onChange={(e) => setNewTopic(e.target.value)}
             onKeyPress={(e) => {
@@ -241,10 +241,10 @@ export function ProblemDetailsForm({
 
       {/* Assets */}
       <div className="space-y-2">
-        <Label>Assets (URLs)</Label>
+        <Label>Ресурсы (URL)</Label>
         <div className="flex gap-2">
           <Input
-            placeholder="Add an asset URL..."
+            placeholder="Добавить URL ресурса..."
             value={newAsset}
             onChange={(e) => setNewAsset(e.target.value)}
             onKeyPress={(e) => {
@@ -282,14 +282,14 @@ export function ProblemDetailsForm({
 
         {/* Source */}
         <div className="space-y-2">
-          <Label>Source</Label>
+          <Label>Источник</Label>
           <div className="flex gap-2">
             <Select value={selectedSourceId} onValueChange={handleSelectSource}>
               <SelectTrigger>
-                <SelectValue placeholder="Select a source or add new" />
+                <SelectValue placeholder="Выберите источник или добавьте новый" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="__none__">None</SelectItem>
+                <SelectItem value="__none__">Нет</SelectItem>
                 {sources.map((s) => (
                   <SelectItem key={s.id} value={String(s.id)}>
                     {s.name}
@@ -298,7 +298,7 @@ export function ProblemDetailsForm({
               </SelectContent>
             </Select>
             <Input
-              placeholder="Or add new source (e.g. IMO)"
+              placeholder="Или добавьте новый источник (например IMO)"
               value={newSourceNameLocal}
               onChange={(e) => handleNewSourceName(e.target.value)}
             />
@@ -306,16 +306,16 @@ export function ProblemDetailsForm({
 
           {(selectedSourceId || newSourceNameLocal) && (
             <div className="space-y-2 mt-2">
-              <Label>Edition (optional)</Label>
+              <Label>Издание (необязательно)</Label>
               <div className="flex gap-2">
                 <Input
-                  placeholder="Year (e.g. 2020)"
+                  placeholder="Год (напр., 2020)"
                   type="number"
                   value={details.sourceEditionYear ?? ""}
                   onChange={(e) => handleEditionYearChange(e.target.value)}
                 />
                 <Input
-                  placeholder="Extra info (Round 2, Fall Session)"
+                  placeholder="Доп. информация (Раунд 2, Осенняя сессия)"
                   value={details.sourceEditionExtra || ""}
                   onChange={(e) => handleEditionExtraChange(e.target.value)}
                 />

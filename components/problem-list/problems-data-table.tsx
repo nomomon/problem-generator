@@ -23,8 +23,6 @@ import {
   ChevronsRight,
   Edit,
   Trash2,
-  Eye,
-  MoreVertical,
   Columns,
   Plus,
 } from "lucide-react";
@@ -41,8 +39,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -121,15 +117,15 @@ export function ProblemsDataTable({
         });
 
         if (response.ok) {
-          toast.success("Problem deleted successfully!");
+          toast.success("Задача успешно удалена!");
           onProblemDeleted?.(problemId);
         } else {
           const error = await response.json();
-          toast.error(error.message || "Failed to delete problem");
+          toast.error(error.message || "Не удалось удалить задачу");
         }
       } catch (error) {
         console.error("Error deleting problem:", error);
-        toast.error("Failed to delete problem. Please try again.");
+        toast.error("Не удалось удалить задачу. Пожалуйста, попробуйте снова.");
       } finally {
         setDeletingId(null);
       }
@@ -162,7 +158,7 @@ export function ProblemsDataTable({
             onCheckedChange={(value) =>
               table.toggleAllPageRowsSelected(!!value)
             }
-            aria-label="Select all"
+            aria-label="Выбрать все"
           />
         </div>
       ),
@@ -171,7 +167,7 @@ export function ProblemsDataTable({
           <Checkbox
             checked={row.getIsSelected()}
             onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
+            aria-label="Выбрать строку"
           />
         </div>
       ),
@@ -188,7 +184,7 @@ export function ProblemsDataTable({
     },
     {
       accessorKey: "name",
-      header: "Name",
+      header: "Название",
       cell: ({ row }) => {
         const name = row.getValue("name") as string;
         return (
@@ -204,19 +200,19 @@ export function ProblemsDataTable({
     },
     {
       accessorKey: "difficulty",
-      header: "Difficulty",
+      header: "Сложность",
       cell: ({ row }) => {
         const difficulty = row.getValue("difficulty") as string | null;
         return (
           <Badge variant={getDifficultyBadgeVariant(difficulty)}>
-            {difficulty || "Not Set"}
+            {difficulty || "Не указано"}
           </Badge>
         );
       },
     },
     {
       accessorKey: "topics",
-      header: "Topics",
+      header: "Темы",
       cell: ({ row }) => {
         const topics = row.getValue("topics") as string[];
         return (
@@ -228,11 +224,11 @@ export function ProblemsDataTable({
                 </Badge>
               ))
             ) : (
-              <span className="text-muted-foreground text-sm">No topics</span>
+              <span className="text-muted-foreground text-sm">Нет тем</span>
             )}
             {topics && topics.length > 2 && (
               <Badge variant="outline" className="text-xs">
-                +{topics.length - 2} more
+                +{topics.length - 2} еще
               </Badge>
             )}
           </div>
@@ -241,19 +237,19 @@ export function ProblemsDataTable({
     },
     {
       accessorKey: "hasCode",
-      header: "Has Code",
+      header: "Есть код",
       cell: ({ row }) => {
         const hasCode = row.getValue("hasCode") as boolean;
         return (
           <Badge variant={hasCode ? "secondary" : "outline"}>
-            {hasCode ? "Yes" : "No"}
+            {hasCode ? "Есть" : "Нет"}
           </Badge>
         );
       },
     },
     {
       accessorKey: "assetCount",
-      header: "Assets",
+      header: "Ресурсов",
       cell: ({ row }) => {
         const assetCount = row.getValue("assetCount") as number;
         return (
@@ -269,7 +265,7 @@ export function ProblemsDataTable({
     },
     {
       accessorKey: "createdAt",
-      header: "Created",
+      header: "Создано",
       cell: ({ row }) => {
         const date = new Date(row.getValue("createdAt"));
         return (
@@ -281,7 +277,7 @@ export function ProblemsDataTable({
     },
     {
       id: "actions",
-      header: "Actions",
+      header: "Действия",
       cell: ({ row }) => {
         const problem = row.original;
 
@@ -290,7 +286,7 @@ export function ProblemsDataTable({
             <Link href={`/dashboard/problems/${problem.id}`}>
               <Button variant="ghost" size="sm">
                 <Edit className="h-4 w-4" />
-                <span className="sr-only">Edit</span>
+                <span className="sr-only">Редактировать</span>
               </Button>
             </Link>
             <AlertDialog>
@@ -302,24 +298,24 @@ export function ProblemsDataTable({
                   className="text-red-600 hover:text-red-800 hover:bg-red-50"
                 >
                   <Trash2 className="h-4 w-4" />
-                  <span className="sr-only">Delete</span>
+                  <span className="sr-only">Удалить</span>
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Delete Problem</AlertDialogTitle>
+                  <AlertDialogTitle>Удалить задачу</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to delete "{problem.name}"? This
-                    action cannot be undone.
+                    Вы уверены что хотите удалить задачу "{problem.name}"? Ее
+                    нельзя вернуть обратно.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>Отмена</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={() => handleDelete(problem.id)}
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   >
-                    Delete
+                    Удалить
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -360,14 +356,14 @@ export function ProblemsDataTable({
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <div className="rounded-lg border border-dashed p-8">
-          <h3 className="text-lg font-semibold">No problems yet</h3>
+          <h3 className="text-lg font-semibold">Задач пока нет</h3>
           <p className="text-muted-foreground mb-4">
-            You haven't created any problems yet.
+            Вы ещё не создавали задачи.
           </p>
           {showCreateButton && (
             <Button onClick={() => router.push("/dashboard/problems/create")}>
               <Plus className="h-4 w-4 mr-2" />
-              Create Your First Problem
+              Создать первую задачу
             </Button>
           )}
         </div>
@@ -381,7 +377,7 @@ export function ProblemsDataTable({
       <div className="flex items-center justify-between">
         <div className="flex flex-1 items-center space-x-2">
           <Input
-            placeholder="Filter problems..."
+            placeholder="Поиск задач..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
@@ -394,7 +390,7 @@ export function ProblemsDataTable({
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
                 <Columns className="h-4 w-4" />
-                <span className="hidden lg:inline">Columns</span>
+                <span className="hidden lg:inline">Колонки</span>
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -428,7 +424,7 @@ export function ProblemsDataTable({
               size="sm"
             >
               <Plus className="h-4 w-4" />
-              <span className="hidden lg:inline">Create Problem</span>
+              <span className="hidden lg:inline">Создать задачу</span>
             </Button>
           )}
         </div>
@@ -478,7 +474,7 @@ export function ProblemsDataTable({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Результатов не найдено.
                 </TableCell>
               </TableRow>
             )}
@@ -490,7 +486,7 @@ export function ProblemsDataTable({
       <div className="flex items-center justify-between px-4">
         <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} строк выбрано.
         </div>
         <div className="flex w-full items-center gap-8 lg:w-fit">
           <div className="hidden items-center gap-2 lg:flex">
@@ -518,7 +514,7 @@ export function ProblemsDataTable({
             </Select>
           </div>
           <div className="flex w-fit items-center justify-center text-sm font-medium">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
+            Страница {table.getState().pagination.pageIndex + 1} из{" "}
             {table.getPageCount()}
           </div>
           <div className="ml-auto flex items-center gap-2 lg:ml-0">
@@ -528,7 +524,7 @@ export function ProblemsDataTable({
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
-              <span className="sr-only">Go to first page</span>
+              <span className="sr-only">Вернуться к первой старнице</span>
               <ChevronsLeft className="h-4 w-4" />
             </Button>
             <Button

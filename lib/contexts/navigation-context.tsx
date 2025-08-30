@@ -30,8 +30,8 @@ export function NavigationProvider({
   children: React.ReactNode;
 }) {
   const [navigation, setNavigationState] = useState<NavigationState>({
-    title: "Dashboard",
-    breadcrumbs: [{ label: "Dashboard" }],
+    title: "Панель",
+    breadcrumbs: [{ label: "Панель" }],
   });
 
   const setNavigation = useCallback((newNavigation: NavigationState) => {

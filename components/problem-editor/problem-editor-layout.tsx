@@ -150,8 +150,8 @@ export function ProblemEditorLayout({
               >
                 <Card className="gap-0 h-full border shadow-sm flex flex-col rounded-r-none  py-0">
                   <PanelHeader
-                    title="Details"
-                    description="Configure metadata"
+                    title="Детали"
+                    description="Настройте метаданные"
                   />
                   <div className="flex-1 min-h-0">
                     <ProblemDetailsForm
@@ -175,8 +175,8 @@ export function ProblemEditorLayout({
           >
             <Card className="gap-0 h-full border shadow-sm flex flex-col rounded-none py-0">
               <PanelHeader
-                title="Code Editor"
-                description="Write your JavaScript function"
+                title="Редактор кода"
+                description="Напишите вашу функцию на JavaScript"
               />
               <div className="flex-1 min-h-0">
                 <CodeEditor
@@ -201,7 +201,10 @@ export function ProblemEditorLayout({
             className="p-4 pl-0"
           >
             <Card className="gap-2 h-full border shadow-sm flex flex-col rounded-l-none py-0">
-              <PanelHeader title="Output" description="Test and view results" />
+              <PanelHeader
+                title="Вывод"
+                description="Тестируйте и просматривайте результаты"
+              />
               <div className="flex-1 min-h-0">
                 <ResizablePanelGroup direction="vertical" className="h-full">
                   <ResizablePanel

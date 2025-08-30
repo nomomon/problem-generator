@@ -26,8 +26,8 @@ export default function DashboardPage() {
   const router = useRouter();
 
   usePageNavigation({
-    title: "Dashboard",
-    breadcrumbs: [{ label: "Dashboard" }],
+    title: "Панель",
+    breadcrumbs: [{ label: "Панель" }],
   });
 
   useEffect(() => {
@@ -60,18 +60,18 @@ export default function DashboardPage() {
     <div className="space-y-6 px-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Панель</h1>
           <p className="text-muted-foreground">
-            Welcome to your dashboard. Here you can view and manage your
-            problems.
+            Добро пожаловать в панель управления! Здесь вы можете создавать и
+            управлять задачами.
           </p>
         </div>
         <div className="flex gap-2">
           <Button onClick={() => router.push("/dashboard/problems/create")}>
-            Create New Problem
+            Создать задачу
           </Button>
           <Link href="/dashboard/problems">
-            <Button variant="outline">View All Problems</Button>
+            <Button variant="outline">Просмотреть все задачи</Button>
           </Link>
         </div>
       </div>
@@ -79,13 +79,13 @@ export default function DashboardPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            Recent Problems
+            Недавние задачи
             {problems.length > 3 && (
               <Link
                 href="/dashboard/problems"
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
-                View all ({problems.length})
+                Просмотреть все ({problems.length})
               </Link>
             )}
           </CardTitle>
@@ -93,7 +93,7 @@ export default function DashboardPage() {
         <CardContent>
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <div>Loading problems...</div>
+              <div>Загрузка...</div>
             </div>
           ) : (
             <ProblemsList

@@ -27,19 +27,19 @@ import { createClient } from "@/lib/utils/supabase/client";
 const data = {
   navMain: [
     {
-      title: "Home",
+      title: "Панель",
       url: "/dashboard",
       icon: IconHome,
     },
     {
-      title: "Problems",
+      title: "Задачи",
       url: "/dashboard/problems",
       icon: IconMath,
     },
   ],
   navSecondary: [
     {
-      title: "Settings",
+      title: "Настройки",
       url: "/dashboard/settings",
       icon: IconSettings,
     },
@@ -118,7 +118,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
+        {/* <NavDocuments items={data.documents} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

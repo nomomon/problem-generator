@@ -66,7 +66,7 @@ export function ProblemToolbar({
   isDeleting = false,
   deleteDisabled = false,
   onBack,
-  backLabel = "Back",
+  backLabel = "Назад",
   code,
   onExport,
   onCopy,
@@ -122,7 +122,11 @@ export function ProblemToolbar({
           className="flex items-center gap-2"
         >
           <Save className="h-4 w-4" />
-          {isSaving ? "Saving..." : hasUnsavedChanges ? "Save" : "Saved"}
+          {isSaving
+            ? "Сохранение..."
+            : hasUnsavedChanges
+              ? "Сохранить"
+              : "Сохранено"}
         </Button>
       )}
 
@@ -140,14 +144,14 @@ export function ProblemToolbar({
           {/* Code Actions */}
           <DropdownMenuItem onClick={onCopy || handleCopyCode} disabled={!code}>
             <Copy className="h-4 w-4 mr-2" />
-            Copy Code
+            Копировать код
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={onExport || handleExportCode}
             disabled={!code}
           >
             <Download className="h-4 w-4 mr-2" />
-            Export Code
+            Экспортировать код
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
@@ -155,7 +159,7 @@ export function ProblemToolbar({
           {/* Keyboard Shortcuts Info */}
           <DropdownMenuItem disabled>
             <Keyboard className="h-4 w-4 mr-2" />
-            ⌘S to Save
+            ⌘S — Сохранить
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
@@ -176,18 +180,19 @@ export function ProblemToolbar({
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Delete Problem</AlertDialogTitle>
+                  <AlertDialogTitle>Удалить задачу</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to delete this problem? This action
-                    cannot be undone.
+                    Вы уверены, что хотите удалить эту задачу? Это действие
+                    невозможно отменить.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>Отменить</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={onDelete}
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   >
-                    Delete
+                    Удалить
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>

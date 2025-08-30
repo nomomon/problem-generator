@@ -9,11 +9,8 @@ export default function ProblemsPage() {
   const [loading, setLoading] = useState(true);
 
   usePageNavigation({
-    title: "Problems",
-    breadcrumbs: [
-      { label: "Dashboard", href: "/dashboard" },
-      { label: "Problems" },
-    ],
+    title: "Задачи",
+    breadcrumbs: [{ label: "Панель", href: "/dashboard" }, { label: "Задачи" }],
   });
 
   useEffect(() => {
@@ -45,15 +42,15 @@ export default function ProblemsPage() {
   return (
     <div className="space-y-6 px-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Problems</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Задачи</h1>
         <p className="text-muted-foreground">
-          Manage and create your problems here.
+          Здесь вы можете просматривать и управлять всеми вашими задачами.
         </p>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-8">
-          <div>Loading problems...</div>
+          <div>Загрузка</div>
         </div>
       ) : (
         <ProblemsList

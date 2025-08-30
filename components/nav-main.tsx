@@ -32,17 +32,17 @@ export function NavMain({
             >
               <a href="/dashboard/problems/create">
                 <IconCirclePlusFilled />
-                <span>Quick Create</span>
+                <span>Создать задачу</span>
               </a>
             </SidebarMenuButton>
-            <Button
+            {/* <Button
               size="icon"
               className="size-8 group-data-[collapsible=icon]:opacity-0"
               variant="outline"
             >
               <IconMail />
               <span className="sr-only">Inbox</span>
-            </Button>
+            </Button> */}
           </SidebarMenuItem>
         </SidebarMenu>
         <SidebarMenu>

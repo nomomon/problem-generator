@@ -15,11 +15,11 @@ const CreateProblemPage = () => {
   const router = useRouter();
 
   usePageNavigation({
-    title: "Create New Problem",
+    title: "Создать задачу",
     breadcrumbs: [
-      { label: "Dashboard", href: "/dashboard" },
-      { label: "Problems", href: "/dashboard/problems" },
-      { label: "Create New Problem" },
+      { label: "Панель", href: "/dashboard" },
+      { label: "Задачи", href: "/dashboard/problems" },
+      { label: "Создать задачу" },
     ],
   });
 
@@ -70,7 +70,7 @@ function generateProblem() {
       isSaving={isPending}
       saveDisabled={!code?.trim()}
       onBack={handleBack}
-      backLabel="Back to Problems"
+      backLabel="Обратно к задачам"
       code={code}
     />
   );

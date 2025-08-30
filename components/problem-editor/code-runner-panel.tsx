@@ -76,12 +76,12 @@ export const CodeRunnerPanel = ({
           {isRunning ? (
             <>
               <Square className="mr-2 h-4 w-4" />
-              Running...
+              Выполняется...
             </>
           ) : (
             <>
               <Play className="mr-2 h-4 w-4" />
-              Run Code
+              Запустить код
             </>
           )}
         </Button>
@@ -128,7 +128,7 @@ export const CodeRunnerPanel = ({
                   <div className="flex items-center gap-2">
                     <Terminal className="h-4 w-4 text-muted-foreground" />
                     <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                      Console
+                      Консоль
                     </h4>
                   </div>
                   <div className="bg-muted/50 border rounded-md p-3 text-sm font-mono max-h-32 overflow-auto">
@@ -144,11 +144,11 @@ export const CodeRunnerPanel = ({
               {result.output && (
                 <div className="space-y-2">
                   <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                    Return Value
+                    Возвращаемое значение
                   </h4>
                   <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-md p-3 text-sm font-mono max-h-32 overflow-auto">
                     <div className="mb-2 font-semibold text-green-800 dark:text-green-400">
-                      Problem text
+                      Текст задачи
                     </div>
                     <pre className="text-green-700 dark:text-green-300 whitespace-pre-wrap">
                       {JSON.parse(result.output).text}
@@ -156,7 +156,7 @@ export const CodeRunnerPanel = ({
                   </div>
                   <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-md p-3 text-sm font-mono max-h-32 overflow-auto">
                     <div className="mb-2 font-semibold text-green-800 dark:text-green-400">
-                      Answer text
+                      Текст ответа
                     </div>
                     <pre className="text-green-700 dark:text-green-300 whitespace-pre-wrap">
                       {JSON.parse(result.output).answerText}
@@ -168,7 +168,7 @@ export const CodeRunnerPanel = ({
               {result.error && (
                 <div className="space-y-2">
                   <h4 className="text-xs font-medium text-destructive uppercase tracking-wide">
-                    Error
+                    Ошибка
                   </h4>
                   <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3 text-sm font-mono text-destructive max-h-32 overflow-auto">
                     <pre className="whitespace-pre-wrap">{result.error}</pre>
@@ -190,10 +190,10 @@ export const CodeRunnerPanel = ({
                 <Terminal className="h-5 w-5 text-muted-foreground" />
               </div>
               <div className="text-muted-foreground text-sm">
-                Click "Run Code" to execute your JavaScript
+                Нажмите «Запустить код», чтобы выполнить ваш JavaScript
               </div>
               <div className="text-xs text-muted-foreground mt-1">
-                Press ⌘+Enter or use the button above
+                Нажмите ⌘+Enter или используйте кнопку выше
               </div>
             </div>
           )}

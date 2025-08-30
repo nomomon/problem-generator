@@ -46,11 +46,11 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
   const router = useRouter();
 
   usePageNavigation({
-    title: `Problem #${id}`,
+    title: `Задача #${id}`,
     breadcrumbs: [
-      { label: "Dashboard", href: "/dashboard" },
-      { label: "Problems", href: "/dashboard/problems" },
-      { label: `Problem #${id}` },
+      { label: "Панель", href: "/dashboard" },
+      { label: "Задачи", href: "/dashboard/problems" },
+      { label: `Задача #${id}` },
     ],
   });
 
@@ -188,7 +188,7 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <div className="text-muted-foreground">Loading problem...</div>
+        <div className="text-muted-foreground">Загрузка...</div>
       </div>
     );
   }
@@ -196,8 +196,8 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
   if (!problem) {
     return (
       <div className="h-screen flex flex-col items-center justify-center">
-        <div className="mb-4 text-muted-foreground">Problem not found</div>
-        <ProblemToolbar onBack={handleBack} backLabel="Back to Problems" />
+        <div className="mb-4 text-muted-foreground">Задача не найдена</div>
+        <ProblemToolbar onBack={handleBack} backLabel="Обратно к задачам" />
       </div>
     );
   }
@@ -211,7 +211,7 @@ const ProblemPage = ({ params }: ProblemPageProps) => {
       onDelete={handleDelete}
       isDeleting={isDeleting}
       onBack={handleBack}
-      backLabel="Back to Problems"
+      backLabel="Обратно к задачам"
       code={currentCode}
     />
   );
