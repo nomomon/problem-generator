@@ -39,7 +39,9 @@ interface ProblemEditorLayoutProps {
 const defaultCode = `
 function generateProblem() {
     return {
-        text: "Problem text",
+        text: "Условие задачи",
+        answerText: "Ответ на задачу",
+        variables: {} // переменные задачи
     };
 }
 `.trim();
