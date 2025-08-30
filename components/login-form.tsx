@@ -23,21 +23,21 @@ export function LoginForm({
         <CardContent className="grid p-0 md:grid-cols-2">
           <div className="p-6 md:p-8">
             <div className="mb-6 text-center">
-              <h1 className="text-2xl font-bold">Welcome</h1>
+              <h1 className="text-2xl font-bold">Добро пожаловать</h1>
               <p className="text-muted-foreground text-balance">
-                Sign in or create an account
+                Войдите или создайте аккаунт
               </p>
             </div>
             <Tabs defaultValue="login" className="w-full">
               <TabsList>
-                <TabsTrigger value="login">Log in</TabsTrigger>
-                <TabsTrigger value="signup">Sign up</TabsTrigger>
+                <TabsTrigger value="login">Войти</TabsTrigger>
+                <TabsTrigger value="signup">Зарегистрироваться</TabsTrigger>
               </TabsList>
 
               <TabsContent value="login" className="mt-4">
                 <form className="flex flex-col gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="login-email">Email</Label>
+                    <Label htmlFor="login-email">Электронная почта</Label>
                     <Input
                       id="login-email"
                       name="email"
@@ -48,7 +48,7 @@ export function LoginForm({
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="login-password">Password</Label>
+                    <Label htmlFor="login-password">Пароль</Label>
                     <Input
                       id="login-password"
                       name="password"
@@ -58,7 +58,7 @@ export function LoginForm({
                     />
                   </div>
                   <Button formAction={login} type="submit" className="w-full">
-                    Log in
+                    Войти
                   </Button>
                 </form>
               </TabsContent>
@@ -66,7 +66,7 @@ export function LoginForm({
               <TabsContent value="signup" className="mt-4">
                 <form className="flex flex-col gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="signup-email">Email</Label>
+                    <Label htmlFor="signup-email">Электронная почта</Label>
                     <Input
                       id="signup-email"
                       name="email"
@@ -77,7 +77,7 @@ export function LoginForm({
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="signup-password">Password</Label>
+                    <Label htmlFor="signup-password">Пароль</Label>
                     <Input
                       id="signup-password"
                       name="password"
@@ -87,7 +87,7 @@ export function LoginForm({
                     />
                   </div>
                   <Button formAction={signup} type="submit" className="w-full">
-                    Create account
+                    Создать аккаунт
                   </Button>
                 </form>
               </TabsContent>
@@ -96,7 +96,7 @@ export function LoginForm({
           <div className="bg-muted relative hidden md:block">
             <img
               src="/placeholder.svg"
-              alt="Image"
+              alt="Изображение"
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />
           </div>
